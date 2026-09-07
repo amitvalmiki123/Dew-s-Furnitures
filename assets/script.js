@@ -187,16 +187,10 @@
   })();
 
   /* ------------------------------------------------------------------
-     Wishlist toggle
+     Wishlist — powered by the Wishlist Hero app (app embed).
+     Buttons are rendered via snippets (header icon, product cards,
+     product page) and enhanced by the app's own JS. No theme JS needed.
      ------------------------------------------------------------------ */
-  (function wishlist() {
-    $$('[data-wishlist]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var saved = btn.classList.toggle('is-saved');
-        btn.setAttribute('aria-pressed', String(saved));
-      });
-    });
-  })();
 
 /* ------------------------------------------------------------------
      AJAX Quick Add (Dawn Native renderContents & Class Sync Fix)

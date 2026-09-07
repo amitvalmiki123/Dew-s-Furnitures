@@ -167,6 +167,7 @@
           <svg aria-hidden="true"><use href="#i-search"/></svg>
         </button>
         <a class="icon-btn hide-sm" href="{{ routes.account_url }}" aria-label="Account"><svg aria-hidden="true"><use href="#i-user"/></svg></a>
+        {% render 'wishlisthero-header-icon' %}
         <a class="icon-btn" href="{{ routes.cart_url }}" id="cart-icon-bubble" aria-label="Cart">
           <svg aria-hidden="true" style="width: 20px; height: 20px;"><use href="#i-cart"/></svg>
           <span class="cart-count">{{ cart.item_count }}</span>
@@ -224,6 +225,7 @@
           {%- endif -%}
         </li>
       {%- endfor -%}
+      <li><a href="#hero-wishlist" class="wishlist-hero-header-icon">Wishlist</a></li>
       <li><a href="{{ routes.account_url }}">My Account</a></li>
     </ul>
   {%- endif -%}

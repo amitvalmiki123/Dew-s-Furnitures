@@ -27,10 +27,8 @@
     </a>
     
     <div class="product__tools">
-      <!-- ORIGINAL CLEAN WISHLIST BUTTON -->
-      <button type="button" class="tool-btn custom-wishlist-btn" aria-label="Add to wishlist">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px; height:18px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-      </button>
+      <!-- WISHLIST HERO BUTTON (app-powered; needs Wishlist Hero app + app embed enabled) -->
+      {% render 'wishlisthero-collection-product', product: product %}
       
       <!-- QUICK VIEW BUTTON -->
       <button class="tool-btn" data-quickview

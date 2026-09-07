@@ -562,6 +562,13 @@
                     section_id: section.id,
                     show_pickup_availability: true
                   -%}
+                  <div class="dews-wishlist-pdp">
+                    {% render 'wishlisthero-collection-product',
+                      product: product,
+                      buttonMode: 'default',
+                      buttonClass: 'wishlisthero-quick-view'
+                    %}
+                  </div>
                 {%- when 'rating' -%}
                   {%- if product.metafields.reviews.rating.value != blank -%}
                     <div class="rating-wrapper">
