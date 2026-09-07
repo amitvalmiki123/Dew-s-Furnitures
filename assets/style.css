@@ -745,10 +745,14 @@ cart-drawer .product-option dd { margin: 0 !important; word-break: break-word; d
    ========================================================= */
 
 /* --- Product cards: app button inside the .product__tools rail --- */
-.product__tools .wishlist-hero-custom-button { display: grid; place-items: center }
+/* NOTE: the app's own CSS tries to absolutely-position .wishlisthero-floating,
+   which made it overlap the quick-view icon. These overrides force it back
+   into the vertical tools stack (heart on top, quick-view below). */
+.product__tools .wishlist-hero-custom-button { display: grid; place-items: center; position: relative; width: 38px; height: 38px; margin: 0; padding: 0 }
+.product__tools .wishlist-hero-custom-button.wishlisthero-floating { position: relative !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; margin: 0 !important }
 .product__tools .wishlist-hero-custom-button:empty { display: none }
 .product__tools .wishlist-hero-custom-button a,
-.product__tools .wishlist-hero-custom-button button { width: 38px; height: 38px; display: grid; place-items: center; background: rgba(251, 250, 248, 0.95); border: 0; border-radius: var(--r-pill); color: var(--ink-2); box-shadow: var(--shadow-xs); transition: background 0.25s var(--ease), color 0.25s var(--ease) }
+.product__tools .wishlist-hero-custom-button button { position: static !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; float: none !important; width: 38px !important; height: 38px !important; min-width: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; display: grid !important; place-items: center; background: rgba(251, 250, 248, 0.95); border: 0; border-radius: var(--r-pill); color: var(--ink-2); box-shadow: var(--shadow-xs); line-height: 1; transition: background 0.25s var(--ease), color 0.25s var(--ease) }
 .product__tools .wishlist-hero-custom-button a:hover,
 .product__tools .wishlist-hero-custom-button button:hover { background: var(--ink); color: #fff }
 .product__tools .wishlist-hero-custom-button svg { width: 17px; height: 17px }
