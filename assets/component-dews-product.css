@@ -260,3 +260,11 @@
 .dews-product .dews-wishlist-inline svg * { fill: #fff !important; stroke: #fff !important; }
 .dews-product .dews-wishlist-inline a:focus-visible,
 .dews-product .dews-wishlist-inline button:focus-visible { outline: 2px solid #a4401f; outline-offset: 2px; }
+/* Kill Dawn's .button pseudo border/shadow (app clones Dawn button classes) */
+.dews-product .dews-wishlist-inline a::before,
+.dews-product .dews-wishlist-inline a::after,
+.dews-product .dews-wishlist-inline button::before,
+.dews-product .dews-wishlist-inline button::after { display: none !important; content: none !important; }
+/* Exact equal heights: ATC = Wishlist = Buy (incl. branded express buttons) */
+.dews-product .product-form__submit { height: 3rem; }
+.dews-product .shopify-payment-button__button { height: 3rem !important; }
