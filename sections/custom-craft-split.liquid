@@ -1,0 +1,86 @@
+<section class="craft-split">
+  {%- for block in section.blocks -%}
+    <div class="craft-row bg-{{ block.settings.bg_color }} {% if block.settings.layout == 'right' %}image-right{% endif %}" {{ block.shopify_attributes }}>
+      <div class="container">
+        <div class="craft-grid">
+          <div class="craft-img">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy' }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+          <div class="craft-content">
+            {%- if block.settings.heading != blank -%}
+              <h2>{{ block.settings.heading }}</h2>
+            {%- endif -%}
+            {%- if block.settings.text != blank -%}
+              <div class="rte">{{ block.settings.text }}</div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endfor -%}
+</section>
+
+{% schema %}
+{
+  "name": "Custom Craft Split",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "split_block",
+      "name": "Image with Text Row",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Desktop Image Placement",
+          "options": [
+            { "value": "left", "label": "Image on Left" },
+            { "value": "right", "label": "Image on Right" }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "bg_color",
+          "label": "Background Color",
+          "options": [
+            { "value": "white", "label": "White" },
+            { "value": "bone", "label": "Bone" }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Our Process"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Explain your craftsmanship and process here.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Craft Split",
+      "blocks": [
+        { "type": "split_block", "settings": { "layout": "left", "bg_color": "bone" } },
+        { "type": "split_block", "settings": { "layout": "right", "bg_color": "white" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

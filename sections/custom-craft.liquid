@@ -1,0 +1,144 @@
+<section class="section section--ink" id="craft" aria-labelledby="craft-title">
+  <div class="container">
+    <div class="craft">
+      
+      <!-- Left Side: Image Collage -->
+      <div class="craft__media reveal">
+        {%- for block in section.blocks limit: 3 -%}
+          <figure class="craft__shot {% if forloop.first %}craft__shot--main{% endif %}" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 1536 | image_tag: loading: 'lazy', decoding: 'async' }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag }}
+            {%- endif -%}
+            
+            {%- if forloop.first and section.settings.badge_number != blank -%}
+              <p class="craft__badge"><strong>{{ section.settings.badge_number }}</strong><span>{{ section.settings.badge_text }}</span></p>
+            {%- endif -%}
+            
+            <figcaption><span class="craft__step-no" aria-hidden="true">0{{ forloop.index }}</span> {{ block.settings.title }}</figcaption>
+          </figure>
+        {%- endfor -%}
+      </div>
+
+      <!-- Right Side: Text & Steps -->
+      <div class="reveal">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="craft-title">{{ section.settings.heading }}</h2>
+        <p style="margin-top:1.25rem;color:#a89e95;font-size:var(--t-lead);line-height:1.75;max-width:46ch">
+          {{ section.settings.description }}
+        </p>
+
+        <ol class="steps">
+          {%- for block in section.blocks limit: 3 -%}
+            <li class="step">
+              <span class="step__num">0{{ forloop.index }}</span>
+              <div>
+                <h3>{{ block.settings.title }}</h3>
+                <p>{{ block.settings.text }}</p>
+              </div>
+            </li>
+          {%- endfor -%}
+        </ol>
+
+        {%- if section.settings.btn_text != blank -%}
+          <a class="btn btn--light" href="{{ section.settings.btn_link }}" style="margin-top:2.25rem">{{ section.settings.btn_text }} <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        {%- endif -%}
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Craft Section",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Our craft"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Nothing here was made in a hurry"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Every frame is cut, joined and finished by hand. The cane is woven panel by panel — no shortcuts, no stapled shortcuts pretending to be joinery."
+    },
+    {
+      "type": "header",
+      "content": "Badge (First Image)"
+    },
+    {
+      "type": "text",
+      "id": "badge_number",
+      "label": "Badge Number",
+      "default": "40+"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Hours per piece"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Craft Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Step Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step Title",
+          "default": "Kiln-dried solid timber"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Step Description",
+          "default": "Sheesham and mango, dried to a stable moisture content so frames don't warp, split or creak as seasons change."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Craft Section",
+      "blocks": [
+        { "type": "step", "settings": { "title": "Kiln-dried solid timber", "text": "Sheesham and mango, dried to a stable moisture content so frames don't warp, split or creak as seasons change." } },
+        { "type": "step", "settings": { "title": "Hand-woven natural cane", "text": "Tight, uniform rattan webbing woven by expert artisans who spend decades mastering tension." } },
+        { "type": "step", "settings": { "title": "Hand-rubbed finishes", "text": "Natural oils and low-VOC waxes applied by hand to bring out the grain without sealing it under plastic." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

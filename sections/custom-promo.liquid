@@ -1,0 +1,100 @@
+<section class="section section--bone" aria-labelledby="promo-title">
+  <div class="container">
+    <div class="promo reveal">
+      <div class="promo__body">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="promo-title">{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.description }}</p>
+
+        <!-- Dynamic Countdown Timer bound to script.js -->
+        <div class="countdown" id="countdown" data-hours="{{ section.settings.hours_duration }}">
+          <div class="countdown__unit">
+            <strong id="cd-d">00</strong>
+            <span>Days</span>
+          </div>
+          <div class="countdown__unit">
+            <strong id="cd-h">00</strong>
+            <span>Hours</span>
+          </div>
+          <div class="countdown__unit">
+            <strong id="cd-m">00</strong>
+            <span>Mins</span>
+          </div>
+          <div class="countdown__unit">
+            <strong id="cd-s">00</strong>
+            <span>Secs</span>
+          </div>
+        </div>
+
+        {%- if section.settings.btn_link != blank -%}
+          <a class="btn btn--outline-light" href="{{ section.settings.btn_link }}">{{ section.settings.btn_text }} <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        {%- endif -%}
+      </div>
+
+      <div class="promo__media">
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', decoding: 'async' }}
+        {%- else -%}
+          {{ 'lifestyle-2' | placeholder_svg_tag }}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Promo Countdown",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Limited release"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The solid walnut sideboard batch"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Only 14 pieces crafted in this run. Once they ship from our workshop, the next batch won't be ready until next season."
+    },
+    {
+      "type": "range",
+      "id": "hours_duration",
+      "min": 12,
+      "max": 168,
+      "step": 12,
+      "unit": "hrs",
+      "label": "Countdown Duration (Hours)",
+      "default": 72
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "Claim your piece"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Promo Countdown"
+    }
+  ]
+}
+{% endschema %}

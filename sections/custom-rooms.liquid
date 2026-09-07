@@ -1,0 +1,136 @@
+<section class="section" id="rooms" aria-labelledby="rooms-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__text">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 id="rooms-title">{{ section.settings.heading }}</h2>
+      </div>
+      {%- if section.settings.link_url != blank -%}
+        <a class="link-arrow" href="{{ section.settings.link_url }}">{{ section.settings.link_text }} <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      {%- endif -%}
+    </div>
+
+    <div class="rooms">
+      <ul class="rooms__list" id="roomsList">
+        {%- for block in section.blocks -%}
+          <li class="rooms__item {% if forloop.first %}is-active{% endif %}" data-room="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            <a class="rooms__link" href="{% if block.settings.collection != blank %}{{ block.settings.collection.url }}{% else %}#{% endif %}">
+              <span class="rooms__num">0{{ forloop.index }}</span>
+              <span class="rooms__thumb">
+                {%- if block.settings.image != blank -%}
+                  {{ block.settings.image | image_url: width: 150 | image_tag: loading: 'lazy' }}
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag }}
+                {%- endif -%}
+              </span>
+              <h3 class="rooms__name">{{ block.settings.title }}</h3>
+              
+              <!-- DYNAMIC COLLECTION COUNT LOGIC -->
+              <span class="rooms__meta">
+                {%- if block.settings.collection != blank -%}
+                  {{ block.settings.collection.all_products_count }} pieces
+                {%- else -%}
+                  {{ block.settings.meta_text }}
+                {%- endif -%}
+              </span>
+              
+              <svg aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="rooms__stage" id="roomsStage" aria-hidden="true">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | image_url: width: 800 }}" 
+                 class="{% if forloop.first %}is-active{% endif %}" 
+                 alt="{{ block.settings.image.alt | escape }}" 
+                 width="800" height="1000" loading="lazy" decoding="async">
+          {%- else -%}
+            {%- assign placeholder_class = '' -%}
+            {%- if forloop.first -%}{%- assign placeholder_class = 'is-active' -%}{%- endif -%}
+            {{ 'lifestyle-' | append: forloop.index | placeholder_svg_tag: placeholder_class }}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Rooms Index",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Shop by room"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Start where you spend your time"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link Text",
+      "default": "All collections"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "room",
+      "name": "Room Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Room Name",
+          "default": "Living Room"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Select Collection"
+        },
+        {
+          "type": "text",
+          "id": "meta_text",
+          "label": "Fallback Meta Text (e.g. 24 pieces)",
+          "default": "24 pieces",
+          "info": "This will show if no collection is selected above."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Room Feature Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Rooms Index",
+      "blocks": [
+        { "type": "room", "settings": { "title": "Living Room", "meta_text": "24 pieces" } },
+        { "type": "room", "settings": { "title": "Bedroom", "meta_text": "18 pieces" } },
+        { "type": "room", "settings": { "title": "Accent Chairs", "meta_text": "12 pieces" } },
+        { "type": "room", "settings": { "title": "Dining Room", "meta_text": "16 pieces" } },
+        { "type": "room", "settings": { "title": "Storage", "meta_text": "14 pieces" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

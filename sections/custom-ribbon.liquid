@@ -1,0 +1,71 @@
+<section class="ribbon" aria-label="{{ section.settings.accessibility_label }}">
+  <div class="ribbon__track">
+    {%- for block in section.blocks -%}
+      <div {{ block.shopify_attributes }}>
+        <svg aria-hidden="true"><use href="#i-{{ block.settings.icon }}"/></svg> {{ block.settings.text }}
+      </div>
+    {%- endfor -%}
+    
+    <!-- Duplicate loop for smooth infinite marquee effect -->
+    {%- for block in section.blocks -%}
+      <div aria-hidden="true">
+        <svg aria-hidden="true"><use href="#i-{{ block.settings.icon }}"/></svg> {{ block.settings.text }}
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom USP Ribbon",
+  "settings": [
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Accessibility Label",
+      "default": "Store benefits"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "hammer", "label": "Hammer" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "rotate", "label": "Rotate (Returns)" },
+            { "value": "lock", "label": "Lock" }
+          ],
+          "default": "hammer"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free delivery over $999"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom USP Ribbon",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "hammer", "text": "Handcrafted in small batches" } },
+        { "type": "benefit", "settings": { "icon": "leaf", "text": "Responsibly sourced timber" } },
+        { "type": "benefit", "settings": { "icon": "truck", "text": "White-glove delivery" } },
+        { "type": "benefit", "settings": { "icon": "shield", "text": "1-year structural warranty" } },
+        { "type": "benefit", "settings": { "icon": "rotate", "text": "30-day easy returns" } },
+        { "type": "benefit", "settings": { "icon": "lock", "text": "Secure checkout" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

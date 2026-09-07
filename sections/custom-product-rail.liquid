@@ -1,0 +1,87 @@
+<section class="section section--bone" id="signature" aria-labelledby="signature-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="signature-title">{{ section.settings.heading }}</h2>
+        <p>{{ section.settings.subheading }}</p>
+      </div>
+      {%- if section.settings.collection != blank -%}
+        <a class="link-arrow" href="{{ section.settings.collection.url }}">{{ section.settings.link_text }} <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      {%- endif -%}
+    </div>
+
+    <div class="rail" data-rail>
+      <div class="rail__track" data-rail-track>
+
+        {%- if section.settings.collection != blank -%}
+          {%- for product in section.settings.collection.products limit: section.settings.limit -%}         
+            {% render 'dews-product-card', product: product, index: forloop.index0 %}
+          {%- endfor -%}
+        {%- else -%}
+          <p style="padding: 20px;">Please select a collection in the theme editor.</p>
+        {%- endif -%}
+
+      </div>
+
+      <div class="rail__foot">
+        <div class="rail__progress"><span class="rail__bar" data-rail-bar></span></div>
+        <div class="rail__nav">
+          <button class="rail__btn" data-rail-prev aria-label="Previous products"><svg aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+          <button class="rail__btn" data-rail-next aria-label="Next products"><svg aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Product Rail",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Best sellers"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Signature pieces"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "The designs our customers keep coming back for — and the ones we're proudest to put our name on."
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link Text",
+      "default": "View all"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection to Display"
+    },
+    {
+      "type": "range",
+      "id": "limit",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "label": "Maximum products to show",
+      "default": 6
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Product Rail"
+    }
+  ]
+}
+{% endschema %}

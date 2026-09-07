@@ -1,0 +1,16 @@
+/* DEW'S TOKENS - Safe to load after Dawn base.css - No overwrite */
+:root{
+  --dews-paper:#fbfaf8;
+  --dews-bone:#f3efe9;
+  --dews-bone-deep:#e9e3da;
+  --dews-line:#e2dcd3;
+  --dews-line-soft:#eeeae3;
+  --dews-ink:#171310;
+  --dews-ink-2:#2a221c;
+  --dews-muted:#7c716a;
+  --dews-cane:#d8b489;
+  --dews-red:#e01b22;
+  --dews-red-ink:#b9151b;
+  --dews-font:'Archivo', sans-serif;
+  --dews-font-accent:'Instrument Serif', serif;
+}

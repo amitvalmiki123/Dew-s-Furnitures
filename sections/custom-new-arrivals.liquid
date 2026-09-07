@@ -1,0 +1,68 @@
+<section class="section" aria-labelledby="arrivals-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__text">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="arrivals-title">{{ section.settings.heading }}</h2>
+      </div>
+      {%- if section.settings.collection != blank -%}
+        <a class="link-arrow" href="{{ section.settings.collection.url }}">{{ section.settings.link_text }} <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      {%- endif -%}
+    </div>
+
+    <div class="arrivals">
+      {%- if section.settings.collection != blank -%}
+        
+        <!-- Left Big Featured Product -->
+        {%- assign feat_product = section.settings.collection.products[0] -%}
+        {%- if feat_product != blank -%}
+          {% render 'dews-product-card', product: feat_product, index: 1, custom_class: 'arrivals__feature' %}
+        {%- endif -%}
+
+        <!-- Right Stacked Products (2 & 3) -->
+        {%- for product in section.settings.collection.products offset: 1 limit: 2 -%}
+          {% render 'dews-product-card', product: product, index: forloop.index %}
+        {%- endfor -%}
+
+      {%- else -%}
+        <p>Please select a collection in the theme editor.</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom New Arrivals",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Just dropped"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "New arrivals"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link Text",
+      "default": "View all new"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom New Arrivals"
+    }
+  ]
+}
+{% endschema %}

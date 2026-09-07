@@ -1,0 +1,339 @@
+<style>
+  /* Override Dawn's base.css conflicts */
+  .dews-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(251,250,248,.86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .4s ease, box-shadow .4s ease, background .4s ease;
+    display: block !important;
+    width: 100%;
+  }
+  .dews-header.is-stuck {
+    border-bottom-color: var(--line);
+    box-shadow: var(--shadow-xs);
+  }
+  .dews-header .header__row {
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    height: var(--header-h);
+    display: grid !important;
+    align-items: center;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) !important;
+  }
+  .dews-header .nav__link {
+    white-space: nowrap !important;
+  }
+</style>
+
+<!-- HEADER -->
+<header class="dews-header" id="header">
+  <div class="header__row">
+
+    <!-- Mobile Hamburger -->
+    <button class="icon-btn hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 20 20" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g transform="matrix(1.2500000000000004,0,0,1.2500000000000004,-2.5000000000000107,-2.5000000000000107)"><path fill="#000000" fill-rule="evenodd" d="M3 15a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1M3 5a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1m0 5a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1" clip-rule="evenodd" opacity="1" data-original="#000000" class=""></path></g></svg>
+    </button>
+
+    {%- if section.settings.menu != blank -%}
+      {%- assign main_menu = linklists[section.settings.menu] -%}
+      {%- assign split_index = section.settings.links_before_logo | default: 3 -%}
+
+      <!-- LEFT NAVIGATION -->
+      <nav class="nav nav--start" aria-label="Primary Left">
+        {%- for link in main_menu.links limit: split_index -%}
+          <div class="nav__item">
+            <a class="nav__link" href="{{ link.url }}">
+              {{ link.title }}
+              {%- if link.links != blank -%}
+                <svg class="caret" aria-hidden="true"><use href="#i-chev-d"/></svg>
+              {%- endif -%}
+            </a>
+            
+            {%- if link.links != blank -%}
+              <div class="mega">
+                <!-- Dropdown Links -->
+                {%- for childlink in link.links -%}
+                  <div>
+                    <p class="mega__label">{{ childlink.title }}</p>
+                    {%- if childlink.links != blank -%}
+                      <ul>
+                        {%- for grandchildlink in childlink.links -%}
+                          <li><a href="{{ grandchildlink.url }}">{{ grandchildlink.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
+
+                <!-- Dynamic Mega Menu Promo Block -->
+                {%- assign promo_block = blank -%}
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'mega_promotion' and block.settings.title == link.title -%}
+                    {%- assign promo_block = block -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- if promo_block != blank -%}
+                  <a class="mega__promo" href="{{ promo_block.settings.link_url }}">
+                    {%- if promo_block.settings.image != blank -%}
+                      {{ promo_block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+                    {%- else -%}
+                      {{ 'collection-1' | placeholder_svg_tag }}
+                    {%- endif -%}
+                    <span>{{ promo_block.settings.heading }}</span>
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <!-- LOGO -->
+    <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        <img class="logo__mark" src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}" alt="{{ shop.name }}" width="{{ section.settings.logo_width }}" height="auto" aria-hidden="true">
+      {%- endif -%}
+      {%- if section.settings.show_wordmark -%}
+        <span class="logo__word">{{ section.settings.wordmark_text | default: shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <!-- RIGHT NAVIGATION & ICONS -->
+    <nav class="nav nav--end" aria-label="Primary Right">
+      {%- if section.settings.menu != blank -%}
+        {%- assign right_links_offset = split_index -%}
+        {%- for link in main_menu.links offset: right_links_offset -%}
+           <div class="nav__item">
+            <a class="nav__link" href="{{ link.url }}">
+              {{ link.title }}
+              {%- if link.links != blank -%}
+                <svg class="caret" aria-hidden="true"><use href="#i-chev-d"/></svg>
+              {%- endif -%}
+            </a>
+            
+            {%- if link.links != blank -%}
+              <div class="mega">
+                <!-- Dropdown Links -->
+                {%- for childlink in link.links -%}
+                  <div>
+                    <p class="mega__label">{{ childlink.title }}</p>
+                    {%- if childlink.links != blank -%}
+                      <ul>
+                        {%- for grandchildlink in childlink.links -%}
+                          <li><a href="{{ grandchildlink.url }}">{{ grandchildlink.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
+
+                 <!-- Dynamic Mega Menu Promo Block -->
+                {%- assign promo_block = blank -%}
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'mega_promotion' and block.settings.title == link.title -%}
+                    {%- assign promo_block = block -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+
+                {%- if promo_block != blank -%}
+                  <a class="mega__promo" href="{{ promo_block.settings.link_url }}">
+                    {%- if promo_block.settings.image != blank -%}
+                      {{ promo_block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+                    {%- else -%}
+                      {{ 'collection-2' | placeholder_svg_tag }}
+                    {%- endif -%}
+                    <span>{{ promo_block.settings.heading }}</span>
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+
+      <!-- Icons -->
+      <div class="actions">
+        <button class="icon-btn" id="searchBtn" aria-label="Search" aria-expanded="false" aria-controls="search">
+          <svg aria-hidden="true"><use href="#i-search"/></svg>
+        </button>
+        <a class="icon-btn hide-sm" href="{{ routes.account_url }}" aria-label="Account"><svg aria-hidden="true"><use href="#i-user"/></svg></a>
+        <a class="icon-btn" href="{{ routes.cart_url }}" id="cart-icon-bubble" aria-label="Cart">
+          <svg aria-hidden="true" style="width: 20px; height: 20px;"><use href="#i-cart"/></svg>
+          <span class="cart-count">{{ cart.item_count }}</span>
+       </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- SEARCH DROPDOWN -->
+  <div class="search" id="search">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search__inner">
+      <svg aria-hidden="true"><use href="#i-search"/></svg>
+      <label class="sr-only" for="searchInput">Search products</label>
+      <input id="searchInput" type="search" name="q" placeholder="Search sofas, beds, armchairs…">
+      <button type="button" class="icon-btn" id="searchClose" aria-label="Close search"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+    </form>
+  </div>
+</header>
+
+<!-- MOBILE DRAWER -->
+<div class="scrim" id="scrim" hidden></div>
+<aside class="site-mobile-drawer" id="drawer" aria-label="Mobile menu">
+  <div class="drawer__head">
+    <span class="logo">
+      {%- if section.settings.logo != blank -%}
+        <img class="logo__mark" src="{{ section.settings.logo | image_url: width: 24 }}" alt="" width="24" height="24" aria-hidden="true">
+      {%- endif -%}
+      {%- if section.settings.show_wordmark -%}
+         <span class="logo__word">{{ section.settings.wordmark_text | default: shop.name }}</span>
+      {%- endif -%}
+    </span>
+    <button class="icon-btn" id="drawerClose" aria-label="Close menu"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  
+  {%- if section.settings.menu != blank -%}
+    <ul class="drawer__nav">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <li>
+          {%- if link.links != blank -%}
+            <button class="drawer__toggle" aria-expanded="false" aria-controls="sub-{{ forloop.index }}">{{ link.title }} <svg aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+            <div class="drawer__sub" id="sub-{{ forloop.index }}">
+               {%- for childlink in link.links -%}
+                  <!-- For mobile, we just list all children and grandchildren flatly -->
+                  {%- if childlink.links != blank -%}
+                     {%- for grandchildlink in childlink.links -%}
+                        <a href="{{ grandchildlink.url }}">{{ grandchildlink.title }}</a>
+                     {%- endfor -%}
+                  {%- else -%}
+                      <a href="{{ childlink.url }}">{{ childlink.title }}</a>
+                  {%- endif -%}
+               {%- endfor -%}
+            </div>
+          {%- else -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+      <li><a href="{{ routes.account_url }}">My Account</a></li>
+    </ul>
+  {%- endif -%}
+
+  <div class="drawer__foot">
+    <a class="btn btn--block" href="{{ routes.all_products_collection_url }}">Shop All Furniture <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  </div>
+</aside>
+
+{% schema %}
+{
+  "name": "Custom Header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu",
+      "info": "Use three menu levels for mega-menu columns."
+    },
+    {
+      "type": "range",
+      "id": "links_before_logo",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Links before logo",
+      "default": 3,
+      "info": "How many links to show on the left side of the logo."
+    },
+    {
+      "type": "header",
+      "content": "Logo Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo mark"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 26
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wordmark",
+      "label": "Show wordmark",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "wordmark_text",
+      "label": "Wordmark text",
+      "default": "Dew's Furniture"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega_promotion",
+      "name": "Mega-menu promotion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Top-level menu title",
+          "info": "Must match the navigation title exactly (e.g. 'Living Room')."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "The Collection"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Header",
+      "blocks": [
+        {
+          "type": "mega_promotion",
+          "settings": {
+            "title": "Living Room"
+          }
+        },
+        {
+          "type": "mega_promotion",
+          "settings": {
+            "title": "Bedroom"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

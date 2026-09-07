@@ -1,0 +1,86 @@
+<section class="section" aria-labelledby="promise-title">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <div class="section-head__text">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="promise-title">{{ section.settings.heading }}</h2>
+      </div>
+    </div>
+
+    <div class="promise">
+      {%- for block in section.blocks -%}
+        <div class="promise__item reveal" style="--d:.0{{ forloop.index0 | times: 3 }}s" {{ block.shopify_attributes }}>
+          <div class="promise__icon">
+            <svg aria-hidden="true"><use href="#i-{{ block.settings.icon }}"/></svg>
+          </div>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.text }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Trust Grid",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "The Dew's promise"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Built for the spaces you live in"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promise",
+      "name": "Promise Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "truck", "label": "Truck" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "rotate", "label": "Rotate (Returns)" },
+            { "value": "hammer", "label": "Hammer" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "White-glove delivery"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Brought into your room of choice, unpacked, inspected and fully assembled by our team."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Trust Grid",
+      "blocks": [
+        { "type": "promise", "settings": { "icon": "truck", "title": "White-glove delivery", "text": "Brought into your room of choice, unpacked, inspected and fully assembled by our team." } },
+        { "type": "promise", "settings": { "icon": "shield", "title": "1-year structural warranty", "text": "If a joint wobbles or timber splits under normal use, we collect it and fix it on our dime." } },
+        { "type": "promise", "settings": { "icon": "rotate", "title": "30-day trial at home", "text": "Live with the piece. If the scale or tone isn't quite right, we'll arrange the return." } },
+        { "type": "promise", "settings": { "icon": "hammer", "title": "Solid wood, no veneers", "text": "Genuine sheesham and mango frames through and through. No compressed particle board." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,245 @@
+<div class="wrap custom-product-hero">
+  <section class="hero">
+    <!-- Left: Image Gallery -->
+    <div class="gallery">
+      <div class="gallery-main" id="mainImg">
+        <img src="{{ product.featured_media | image_url: width: 800 }}" alt="{{ product.title }}" id="MainProductImage">
+      </div>
+      <div class="thumbs">
+        {% for media in product.media %}
+          <div class="thumb {% if forloop.first %}active{% endif %}" data-img="{{ media | image_url: width: 800 }}">
+            <img src="{{ media | image_url: width: 150 }}" alt="{{ media.alt | escape }}">
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Right: Product Info -->
+    <div class="info">
+      <span class="eyebrow">{{ product.vendor }}</span>
+      <h1 class="title">{{ product.title }}</h1>
+
+      <div class="rating-row">
+        <div class="stars">
+          <!-- Static Stars for matching design -->
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="#c1502e"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18 21l-6-3.7L6 21l1.5-6.6L2 9.6l7.1-.7z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="#c1502e"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18 21l-6-3.7L6 21l1.5-6.6L2 9.6l7.1-.7z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="#c1502e"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18 21l-6-3.7L6 21l1.5-6.6L2 9.6l7.1-.7z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="#c1502e"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18 21l-6-3.7L6 21l1.5-6.6L2 9.6l7.1-.7z"/></svg>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="#c1502e"><path d="M12 2l2.9 6.9L22 9.6l-5.5 4.8L18 21l-6-3.7L6 21l1.5-6.6L2 9.6l7.1-.7z"/></svg>
+        </div>
+        <span class="rating-count">4.9 · 128 reviews</span>
+      </div>
+
+      <p class="price">{{ product.price | money }} <span>{{ cart.currency.iso_code }}</span></p>
+
+      <div class="divider"></div>
+
+      <!-- Add to Cart Form -->
+      {% form 'product', product, id: 'CustomProductForm' %}
+        <!-- Hidden variant input -->
+        <input type="hidden" name="id" id="variant-id-input" value="{{ product.selected_or_first_available_variant.id }}">
+
+        <!-- Dynamic Color Swatches -->
+        {% unless product.has_only_default_variant %}
+          {% for option in product.options_with_values %}
+            {% assign downcase_option = option.name | downcase %}
+            {% if downcase_option == 'color' or downcase_option == 'colour' %}
+              <span class="block-label">{{ option.name }} — <strong id="colorName" style="color:var(--ink)">{{ option.selected_value }}</strong></span>
+              <div class="swatch-row" id="swatchRow">
+                {% for value in option.values %}
+                  {% assign bg_color = value | downcase | remove: ' ' %}
+                  <button type="button" class="swatch-item {% if value == option.selected_value %}active{% endif %}" data-name="{{ value }}" data-variant-id="{{ product.variants[forloop.index0].id }}">
+                    <!-- Checks if Shopify Admin visual swatch is available, else uses color name -->
+                    <span class="swatch-circle" style="background: {% if value.swatch.color %}rgb({{ value.swatch.color.rgb }}){% else %}{{ bg_color }}{% endif %};"></span>
+                    <span class="swatch-name">{{ value }}</span>
+                  </button>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endunless %}
+
+        <!-- Inventory -->
+        {% if product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity < 15 %}
+          <div class="stock-badge">Low stock — only {{ product.selected_or_first_available_variant.inventory_quantity }} left</div>
+        {% endif %}
+
+        <!-- Quantity -->
+        <div class="qty-row">
+          <span class="block-label" style="margin-bottom:0;">Quantity</span>
+          <div class="qty-stepper">
+            <button type="button" id="qtyMinus">−</button>
+            <input type="number" name="quantity" class="qty-value" id="qtyVal" value="1" min="1" readonly>
+            <button type="button" id="qtyPlus">+</button>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="cta-row">
+          <button type="submit" class="btn btn-primary">Add to cart</button>
+          <div class="btn-accent-wrapper">
+             {{ form | payment_button }}
+          </div>
+        </div>
+      {% endform %}
+
+      <!-- Payment Icons -->
+      <div class="pay-block">
+        <p class="pay-label">Secure checkout with</p>
+        <div class="pay-row">
+          <span class="pay-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>VISA</span>
+          <span class="pay-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>MASTERCARD</span>
+          <span class="pay-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M9 9h6v6H9z"/></svg>PAYPAL</span>
+          <span class="pay-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>AMEX</span>
+        </div>
+      </div>
+
+      <!-- Trust Row -->
+      <div class="trust-row">
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="17.5" cy="18.5" r="1.5"/></svg><span>Fast Shipping</span></div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg><span>Easy Returns</span></div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Secured Payment</span></div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3z"/><path d="M3 19a2 2 0 0 0 2 2h1v-6H3z"/></svg><span>24/7 Support</span></div>
+      </div>
+
+      <div class="share-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+        Share this product
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  /* --- Exact CSS from your HTML Prototype --- */
+  .custom-product-hero { max-width: 1180px; margin: 0 auto; padding: 0 32px; font-family: 'Inter', sans-serif; }
+  .custom-product-hero .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; padding: 56px 0 40px; align-items: start; }
+  .custom-product-hero .gallery-main { background: var(--surface, #eeeae1); border-radius: 14px; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .custom-product-hero .gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+  .custom-product-hero .thumbs { display: flex; gap: 12px; margin-top: 14px; }
+  .custom-product-hero .thumb { width: 84px; height: 84px; border-radius: 9px; background: var(--surface, #eeeae1); border: 2px solid transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color .15s; overflow: hidden; }
+  .custom-product-hero .thumb.active { border-color: var(--ink, #1c1a17); }
+  .custom-product-hero .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  
+  .custom-product-hero .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted, #7a746a); font-family: 'Inter', sans-serif; }
+  .custom-product-hero .title { font-size: 32px; font-weight: 800; margin-top: 8px; letter-spacing: -.01em; font-family: 'Manrope', sans-serif; color: #1c1a17; }
+  
+  .custom-product-hero .rating-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .custom-product-hero .stars { display: flex; gap: 2px; }
+  .custom-product-hero .rating-count { font-size: 13px; color: var(--muted, #7a746a); font-weight: 500; }
+  
+  .custom-product-hero .price { font-size: 24px; font-weight: 700; margin-top: 18px; color: #1c1a17; }
+  .custom-product-hero .price span { font-size: 14px; color: var(--muted, #7a746a); font-weight: 500; margin-left: 6px; }
+  
+  .custom-product-hero .divider { height: 1px; background: var(--line, #e9e4da); margin: 22px 0; }
+  .custom-product-hero .block-label { font-size: 13px; font-weight: 700; color: var(--ink-soft, #3a352f); margin-bottom: 12px; display: block; }
+  
+  .custom-product-hero .swatch-row { display: flex; gap: 22px; }
+  .custom-product-hero .swatch-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; background: none; border: none; padding: 0; }
+  .custom-product-hero .swatch-circle { width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent; box-shadow: 0 0 0 1px var(--line, #e9e4da) inset; position: relative; transition: transform .15s, box-shadow .15s; }
+  .custom-product-hero .swatch-item.active .swatch-circle { box-shadow: 0 0 0 2px var(--paper, #ffffff), 0 0 0 4px var(--ink, #1c1a17); transform: scale(1.04); }
+  .custom-product-hero .swatch-name { font-size: 12px; font-weight: 600; color: var(--muted, #7a746a); }
+  .custom-product-hero .swatch-item.active .swatch-name { color: var(--ink, #1c1a17); }
+  
+  .custom-product-hero .stock-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--rust-dark, #a4401f); font-weight: 600; margin-top: 18px; }
+  .custom-product-hero .stock-badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--rust, #c1502e); }
+  
+  .custom-product-hero .qty-row { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; }
+  .custom-product-hero .qty-stepper { display: inline-flex; align-items: center; border: 1px solid var(--line, #e9e4da); border-radius: 999px; background: var(--cream, #f7f4ee); overflow: hidden; height: 40px; }
+  .custom-product-hero .qty-stepper button { width: 40px; height: 40px; background: none; border: none; font-size: 17px; color: var(--ink, #1c1a17); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .custom-product-hero .qty-stepper button:hover { background: var(--line, #e9e4da); }
+  .custom-product-hero .qty-value { width: 36px; text-align: center; font-weight: 700; font-size: 14px; border: none; background: transparent; padding: 0; }
+  .custom-product-hero .qty-value:focus { outline: none; }
+  
+  .custom-product-hero .cta-row { display: flex; gap: 12px; margin-top: 24px; }
+  .custom-product-hero .btn { flex: 1; height: 54px; border-radius: 999px; border: none; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform .12s; cursor: pointer; font-family: 'Inter', sans-serif; }
+  .custom-product-hero .btn-primary { background: var(--ink, #1c1a17); color: #fff; }
+  .custom-product-hero .btn-primary:hover { background: #33221a; }
+  .custom-product-hero .btn-accent-wrapper { flex: 1; }
+  
+  /* Override Shopify Dynamic Checkout Button to match your orange button */
+  .custom-product-hero .shopify-payment-button__button--unbranded { background-color: var(--rust, #c1502e) !important; color: #fff !important; height: 54px !important; border-radius: 999px !important; font-weight: 700 !important; font-size: 15px !important; font-family: 'Inter', sans-serif !important; border: none !important; box-shadow: none !important; }
+  .custom-product-hero .shopify-payment-button__button--unbranded:hover { background-color: var(--rust-dark, #a4401f) !important; }
+  
+  .custom-product-hero .pay-block { margin-top: 22px; }
+  .custom-product-hero .pay-label { font-size: 12px; color: var(--muted, #7a746a); font-weight: 600; margin-bottom: 10px; }
+  .custom-product-hero .pay-row { display: flex; gap: 8px; }
+  .custom-product-hero .pay-badge { flex: 1; height: 38px; border: 1px solid var(--line, #e9e4da); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--ink-soft, #3a352f); background: var(--paper, #ffffff); }
+  .custom-product-hero .pay-badge svg { width: 16px; height: 16px; }
+  
+  .custom-product-hero .trust-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 26px; border-top: 1px solid var(--line, #e9e4da); border-bottom: 1px solid var(--line, #e9e4da); padding: 20px 0; }
+  .custom-product-hero .trust-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 0 8px; position: relative; }
+  .custom-product-hero .trust-item:not(:last-child)::after { content: ""; position: absolute; right: 0; top: 4px; bottom: 4px; width: 1px; background: var(--line, #e9e4da); }
+  .custom-product-hero .trust-item svg { width: 22px; height: 22px; color: var(--rust, #c1502e); }
+  .custom-product-hero .trust-item span { font-size: 11.5px; font-weight: 600; color: var(--ink-soft, #3a352f); line-height: 1.3; }
+  
+  .custom-product-hero .share-row { display: flex; align-items: center; gap: 8px; margin-top: 22px; font-size: 13px; font-weight: 600; color: var(--muted, #7a746a); }
+  
+  /* Mobile Responsive */
+  @media screen and (max-width: 900px) {
+    .custom-product-hero .hero { grid-template-columns: 1fr; gap: 32px; padding: 24px 0; }
+    .custom-product-hero .cta-row { flex-direction: column; }
+    .custom-product-hero .trust-row { grid-template-columns: 1fr 1fr; row-gap: 20px; }
+    .custom-product-hero .trust-item:nth-child(2)::after { display: none; }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Thumbnail Image Gallery Logic
+  const thumbs = document.querySelectorAll('.custom-product-hero .thumb');
+  const mainImg = document.getElementById('MainProductImage');
+  
+  thumbs.forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      // Remove active class from all
+      thumbs.forEach(t => t.classList.remove('active'));
+      // Add active to clicked
+      this.classList.add('active');
+      // Change Main Image
+      mainImg.src = this.getAttribute('data-img');
+    });
+  });
+
+  // 2. Quantity Logic
+  let qtyVal = document.getElementById('qtyVal');
+  document.getElementById('qtyMinus').addEventListener('click', () => { 
+    if(qtyVal.value > 1) qtyVal.value = parseInt(qtyVal.value) - 1; 
+  });
+  document.getElementById('qtyPlus').addEventListener('click', () => { 
+    qtyVal.value = parseInt(qtyVal.value) + 1; 
+  });
+
+  // 3. Variant Swatch Logic
+  const swatchItems = document.querySelectorAll('.custom-product-hero .swatch-item');
+  const colorNameEl = document.getElementById('colorName');
+  const variantInput = document.getElementById('variant-id-input');
+
+  swatchItems.forEach(el => {
+    el.addEventListener('click', () => {
+      // Update Active class
+      swatchItems.forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      
+      // Update text label (e.g. Color - Yellow)
+      if(colorNameEl) { colorNameEl.textContent = el.dataset.name; }
+      
+      // Update hidden input for cart submission
+      if(variantInput) { variantInput.value = el.dataset.variantId; }
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Custom Main Product",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Custom Main Product"
+    }
+  ]
+}
+{% endschema %}

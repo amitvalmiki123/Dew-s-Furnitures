@@ -1,0 +1,236 @@
+<footer class="footer">
+  <div class="container">
+    
+    <!-- Newsletter Signup Band inside Footer -->
+    <div class="footer__signup">
+      <div class="footer__signup-text">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.news_eyebrow }}</p>
+        <h2>{{ section.settings.news_heading }}</h2>
+        <p>{{ section.settings.news_subheading }}</p>
+      </div>
+      <div>
+        <form class="newsletter__form" id="newsForm">
+          <label class="sr-only" for="newsEmail">Email address</label>
+          <input id="newsEmail" type="email" placeholder="Enter your email address" required>
+          <button type="submit" class="btn btn--light">Subscribe <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </form>
+        <div class="form-msg" id="formMsg" aria-live="polite"></div>
+        <p class="fineprint">By subscribing you agree to our terms. Unsubscribe at any time.</p>
+      </div>
+    </div>
+
+    <!-- Main Footer Grid -->
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="logo" href="{{ routes.root_url }}">
+          {%- if section.settings.logo != blank -%}
+            <img class="logo__mark" src="{{ section.settings.logo | image_url: width: 30 }}" alt="" width="26" height="26" aria-hidden="true">
+          {%- endif -%}
+          <span class="logo__word" style="color:#fff;">{{ shop.name }}</span>
+        </a>
+        <p>{{ section.settings.brand_bio }}</p>
+        <div class="socials">
+          <a href="{{ section.settings.instagram }}" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-instagram"/></svg></a>
+          <a href="{{ section.settings.pinterest }}" aria-label="Pinterest"><svg aria-hidden="true"><use href="#i-pinterest"/></svg></a>
+          <a href="{{ section.settings.facebook }}" aria-label="Facebook"><svg aria-hidden="true"><use href="#i-facebook"/></svg></a>
+        </div>
+      </div>
+
+      <div class="footer__col">
+        <h3>{{ section.settings.col_1_title }}</h3>
+        <ul>
+          {%- for link in linklists[section.settings.col_1_menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>{{ section.settings.col_2_title }}</h3>
+        <ul>
+          {%- for link in linklists[section.settings.col_2_menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h3>{{ section.settings.col_3_title }}</h3>
+        <ul>
+          {%- for link in linklists[section.settings.col_3_menu].links -%}
+            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div class="footer__col footer__col--last">
+        <h3>{{ section.settings.col_4_title }}</h3>
+        {%- if section.settings.col_4_type == 'menu' -%}
+          <ul>
+            {%- for link in linklists[section.settings.col_4_menu].links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <div class="footer__contact-text">
+            {{ section.settings.col_4_content }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Footer Bottom Bar -->
+    <div class="footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+      <div class="pay" aria-label="Payment methods">
+        <span>VISA</span>
+        <span>MC</span>
+        <span>AMEX</span>
+        <span>UPI</span>
+        <span>PAYPAL</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Custom Footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Newsletter Settings"
+    },
+    {
+      "type": "text",
+      "id": "news_eyebrow",
+      "label": "Newsletter Eyebrow",
+      "default": "Stay close to the craft"
+    },
+    {
+      "type": "text",
+      "id": "news_heading",
+      "label": "Newsletter Heading",
+      "default": "Get early access to batch drops"
+    },
+    {
+      "type": "textarea",
+      "id": "news_subheading",
+      "label": "Newsletter Subheading",
+      "default": "No spam, ever. Just notice when our next solid wood and cane collection enters the workshop."
+    },
+    {
+      "type": "header",
+      "content": "Brand & Socials"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Footer Logo Mark"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_bio",
+      "label": "Brand Bio",
+      "default": "Handcrafted solid wood and natural cane furniture built slowly and honestly for modern homes."
+    },
+    {
+      "type": "url",
+      "id": "instagram",
+      "label": "Instagram Link"
+    },
+    {
+      "type": "url",
+      "id": "pinterest",
+      "label": "Pinterest Link"
+    },
+    {
+      "type": "url",
+      "id": "facebook",
+      "label": "Facebook Link"
+    },
+    {
+      "type": "header",
+      "content": "Column 1 Navigation"
+    },
+    {
+      "type": "text",
+      "id": "col_1_title",
+      "label": "Column 1 Title",
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "col_1_menu",
+      "label": "Column 1 Menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 2 Navigation"
+    },
+    {
+      "type": "text",
+      "id": "col_2_title",
+      "label": "Column 2 Title",
+      "default": "Collections"
+    },
+    {
+      "type": "link_list",
+      "id": "col_2_menu",
+      "label": "Column 2 Menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 3 Navigation"
+    },
+    {
+      "type": "text",
+      "id": "col_3_title",
+      "label": "Column 3 Title",
+      "default": "Craft"
+    },
+    {
+      "type": "link_list",
+      "id": "col_3_menu",
+      "label": "Column 3 Menu"
+    },
+    {
+      "type": "header",
+      "content": "Column 4 Navigation or Content"
+    },
+    {
+      "type": "text",
+      "id": "col_4_title",
+      "label": "Column 4 Title",
+      "default": "Contact"
+    },
+    {
+      "type": "select",
+      "id": "col_4_type",
+      "label": "Column 4 Content Type",
+      "options": [
+        { "value": "menu", "label": "Menu List" },
+        { "value": "text", "label": "Custom Text / Contact Info" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "link_list",
+      "id": "col_4_menu",
+      "label": "Column 4 Menu"
+    },
+    {
+      "type": "richtext",
+      "id": "col_4_content",
+      "label": "Column 4 Contact Content",
+      "default": "<p>hello@dewsfurniture.com</p><p>[Business phone number]</p><p>Mon–Fri, 9am–6pm</p><p>[Street address], [Suburb]</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Footer"
+    }
+  ]
+}
+{% endschema %}

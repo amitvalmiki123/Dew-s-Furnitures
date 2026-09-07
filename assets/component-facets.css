@@ -1,0 +1,440 @@
+/* =====================================================================
+   DEW'S FURNITURE: MAMTA HANDICRAFT STYLE FACETS & FILTERS
+===================================================================== */
+
+/* ==========================================
+   1. GLOBAL & DESKTOP LAYOUT
+========================================== */
+.facets-container {
+  display: flex !important;
+  align-items: center !important;
+  padding: 1.5rem 0 !important;
+  margin-bottom: 2rem !important;
+  border-bottom: none !important;
+  width: 100% !important;
+}
+
+.facets.small-hide {
+  width: 100% !important;
+  display: block !important;
+}
+
+/* --- Split layout: Count Left, Filters Right --- */
+.facets__form {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  gap: 1.5rem !important;
+  margin: 0 !important;
+}
+
+.product-count {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  flex-shrink: 0 !important;
+}
+
+.product-count__text {
+  font-size: 14px !important;
+  color: #333 !important;
+  margin: 0 !important;
+}
+
+#FacetsWrapperDesktop {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 15px !important;
+  flex-grow: 1 !important;
+}
+
+.facet-filters__label, 
+.facets__heading {
+  display: none !important;
+}
+
+/* --- Clean Text Triggers (No Pill Backgrounds) --- */
+.facets__summary,
+.facet-filters__sort,
+.facet-filters__field {
+  background: transparent !important;
+  border: none !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.facets__summary:hover,
+.facet-filters__sort:hover,
+.facets__disclosure[open] .facets__summary {
+  color: #000 !important;
+}
+
+.facets__summary .icon-caret,
+.facet-filters__field .icon-caret,
+.select .icon-caret {
+  position: static !important;
+  margin-left: 2px !important;
+  width: 10px !important;
+  height: 10px !important;
+  flex-shrink: 0 !important;
+}
+
+/* --- Fix Dropdown Sort Box Outline (Hide ::after & ::before pseudo-elements) --- */
+.facet-filters__field .select::after,
+.facet-filters__field .select::before,
+.select::after,
+.select::before,
+.facet-filters__sort::after,
+.facet-filters__sort::before {
+  display: none !important;
+  content: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.facet-filters__sort {
+  padding-right: 0 !important; 
+}
+
+/* --- Desktop Dropdown Box --- */
+.facets__disclosure {
+  position: relative !important;
+  list-style: none !important;
+}
+
+.facets__display {
+  position: absolute !important;
+  top: calc(100% + 5px) !important;
+  right: 0 !important;
+  min-width: 280px !important;
+  background-color: #fff !important;
+  border: 1px solid #eaeaea !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  padding: 1rem !important;
+  z-index: 99 !important;
+}
+
+.facets__header {
+  display: flex !important;
+  justify-content: space-between !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  margin-bottom: 15px !important;
+}
+
+.facets__selected { color: #666 !important; font-size: 13px !important; }
+.facets__reset { font-size: 13px !important; color: #111 !important; text-decoration: underline !important; }
+
+/* Remove unwanted borders from lists */
+fieldset.facets-wrap {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.facets__list {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  list-style: none !important;
+}
+
+/* --- Checkboxes (Native Style) --- */
+.facet-checkbox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 14px !important;
+  color: #333 !important;
+  cursor: pointer !important;
+  padding: 4px 0 !important;
+}
+
+.facet-checkbox input[type='checkbox'] {
+  position: static !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  accent-color: #111 !important;
+  opacity: 1 !important;
+}
+
+/* Hide Shopify's SVG checkmarks, rely on native input */
+.facet-checkbox > svg,
+.facet-checkbox > .svg-wrapper {
+  display: none !important;
+}
+
+/* Price Range Inputs Clean Layout */
+.facets__price {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 0.5rem 0 !important;
+}
+
+.facets__price .field {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-grow: 1 !important;
+}
+
+.facets__price .field__input {
+  font-size: 0.85rem !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 12px 12px 4px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #dcdcdc !important;
+  background-color: #fff !important;
+  width: 100% !important;
+}
+
+.facets__price .field__input:focus {
+  border-color: #111 !important;
+  outline: none !important;
+}
+
+.facets__price .field__label {
+  font-size: 0.75rem !important;
+  top: 6px !important;
+  left: 12px !important;
+  color: #666 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+}
+
+.facets__price .field-currency {
+  font-size: 0.85rem !important;
+  color: #666 !important;
+  margin-right: 4px !important;
+}
+
+
+/* ==========================================
+   2. MOBILE LAYOUT (< 749px)
+========================================== */
+@media screen and (max-width: 749px) {
+  .facets-container {
+    padding: 10px 15px !important;
+    border-bottom: 1px solid #eaeaea !important;
+  }
+
+  /* --- Compact Mobile Filter Button --- */
+  .mobile-facets__open {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 6px 14px !important;
+    background-color: #fff !important;
+    border: 1px solid #dcdcdc !important;
+    border-radius: 99px !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  .mobile-facets__open .mobile-facets__open-label,
+  span.mobile-facets__open-label.button-label {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #111 !important;
+  }
+
+  .mobile-facets__open .svg-wrapper {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  /* --- Full Drawer Overlay --- */
+  .mobile-facets {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    z-index: 100 !important;
+  }
+
+  /* --- Drawer Body --- */
+  .mobile-facets__inner {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    width: 85% !important;
+    max-width: 360px !important;
+    height: 100% !important;
+    background-color: #fff !important;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1) !important;
+    z-index: 101 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* --- Drawer Header (Filter + X) --- */
+  .mobile-facets__header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 20px !important;
+    border-bottom: 1px solid #eaeaea !important;
+  }
+
+  .mobile-facets__heading {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #111 !important;
+    margin: 0 !important;
+  }
+
+  .mobile-facets__close {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .mobile-facets__close svg {
+    width: 14px !important;
+    height: 14px !important;
+    fill: #111 !important;
+  }
+
+  /* Hide duplicate item count inside header */
+  .mobile-facets__header .mobile-facets__count { display: none !important; }
+
+  .mobile-facets__main {
+    padding: 10px 20px !important;
+    flex-grow: 1 !important;
+    overflow-y: auto !important;
+  }
+
+  /* --- Accordion conversion (Bypass sliding submenus) --- */
+  .mobile-facets__summary {
+    padding: 15px 0 !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid #f5f5f5 !important;
+  }
+  
+  .mobile-facets__summary svg {
+    width: 12px !important;
+    height: 12px !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  /* Force Submenus to act like Inline Accordions */
+  .mobile-facets__submenu {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    visibility: visible !important;
+  }
+
+  /* Hide submenu when its parent details is closed */
+  .mobile-facets__details:not([open]) .mobile-facets__submenu {
+    display: none !important;
+  }
+
+  /* Hide the back button completely */
+  .mobile-facets__close-button {
+    display: none !important;
+  }
+
+  /* --- Mobile Checkboxes --- */
+  .mobile-facets__label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 8px 0 !important;
+    font-size: 14px !important;
+    color: #333 !important;
+  }
+
+  .mobile-facets__label svg { display: none !important; }
+
+  .mobile-facets__checkbox {
+    position: static !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    accent-color: #111 !important;
+    opacity: 1 !important;
+  }
+
+  .mobile-facets__list {
+    padding: 10px 0 15px 0 !important;
+  }
+  
+  /* Mobile Price Layout */
+  .mobile-facets__submenu .facets__price {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 1rem 0 !important;
+    width: 100% !important;
+  }
+
+  .mobile-facets__submenu .facets__price .field {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  /* --- Mobile Footer (Clear All & Apply) --- */
+  .mobile-facets__footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 15px 20px !important;
+    border-top: 1px solid #eaeaea !important;
+    background-color: #fff !important;
+    gap: 15px !important;
+  }
+
+  .mobile-facets__clear {
+    font-size: 14px !important;
+    color: #666 !important;
+    text-decoration: underline !important;
+  }
+
+  .mobile-facets__footer .button,
+  .mobile-facets__footer button {
+    background-color: #111 !important;
+    color: #fff !important;
+    border-radius: 99px !important;
+    font-size: 14px !important;
+    padding: 12px 24px !important;
+    min-height: auto !important;
+    border: none !important;
+    flex-grow: 1 !important;
+    text-align: center !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  
+  .mobile-facets__footer .button::after {
+    display: none !important;
+  }
+}

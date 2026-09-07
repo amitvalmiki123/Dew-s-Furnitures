@@ -1,0 +1,105 @@
+<section class="details-section wrap" style="max-width: 1180px; margin: 0 auto; padding: 0;">
+  {% if section.settings.heading != blank %}
+    <h3 class="details-heading">{{ section.settings.heading }}</h3>
+  {% endif %}
+
+  {% for block in section.blocks %}
+    <div class="acc-item {% if forloop.first %}open{% endif %}" {{ block.shopify_attributes }}>
+      <button class="acc-head">{{ block.settings.title }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="acc-body-wrap">
+        <div class="acc-body">
+          {% if block.settings.description_dynamic %}
+            <p>{{ product.description }}</p>
+          {% else %}
+            {{ block.settings.content }}
+            {{ block.settings.page.content }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</section>
+
+<style>
+  /* Exact CSS from your HTML prototype */
+  .details-section { padding: 44px 0 70px; border-top: 1px solid var(--line, #e9e4da); margin-top: 8px; }
+  .details-heading { font-size: 20px; font-weight: 800; margin-bottom: 18px; font-family: 'Manrope', sans-serif; }
+  .acc-item { border-bottom: 1px solid var(--line, #e9e4da); }
+  .acc-head { width: 100%; background: none; border: none; display: flex; align-items: center; justify-content: space-between; padding: 18px 2px; font-size: 15px; font-weight: 700; color: var(--ink, #1c1a17); text-align: left; font-family: 'Inter', sans-serif; cursor: pointer; }
+  .acc-head svg { width: 16px; height: 16px; transition: transform .2s; flex-shrink: 0; color: var(--muted, #7a746a); }
+  .acc-item.open .acc-head svg { transform: rotate(180deg); }
+  .acc-body-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+  .acc-item.open .acc-body-wrap { grid-template-rows: 1fr; }
+  .acc-body { overflow: hidden; }
+  .acc-body p, .acc-body span, .acc-body div { font-size: 14px; line-height: 1.7; color: var(--muted, #7a746a); padding: 0 2px 20px; max-width: 640px; font-family: 'Inter', sans-serif; margin: 0; }
+</style>
+
+<script>
+  // Exact JS from your HTML prototype
+  document.addEventListener('DOMContentLoaded', function() {
+    const accHeads = document.querySelectorAll('.acc-head');
+    accHeads.forEach(head => {
+      head.addEventListener('click', () => {
+        const item = head.closest('.acc-item');
+        const wasOpen = item.classList.contains('open');
+        // Close all others
+        document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+        // Toggle current
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Details",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Product Details"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion",
+      "name": "Accordion Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Row Title",
+          "default": "Description"
+        },
+        {
+          "type": "checkbox",
+          "id": "description_dynamic",
+          "label": "Use Product Description?",
+          "info": "If checked, this will automatically pull the description from the product.",
+          "default": false
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Row Content",
+          "default": "<p>Add your shipping, returns, or material details here.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Or Select a Page (e.g. Return Policy)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Product Details"
+    }
+  ]
+}
+{% endschema %}
