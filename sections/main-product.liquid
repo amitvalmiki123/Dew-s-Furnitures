@@ -615,6 +615,54 @@
                       <p class="dews-dims__note">Add metafields (custom.width, depth, height, seat_height) or fill the fallback values in this block's settings.</p>
                     </div>
                   {%- endif -%}
+                {%- when 'material_care' -%}
+                  {%- liquid
+                    assign mat_variant = product.selected_or_first_available_variant
+                    assign mat_material = mat_variant.metafields.custom.material | default: product.metafields.custom.material | default: block.settings.material
+                    assign mat_finish = mat_variant.metafields.custom.finish | default: product.metafields.custom.finish | default: block.settings.finish
+                    assign mat_care = mat_variant.metafields.custom.care | default: product.metafields.custom.care | default: block.settings.care
+                  -%}
+                  {%- if mat_material != blank or mat_finish != blank or mat_care != blank -%}
+                    <div class="dews-mat" data-dews-mat {{ block.shopify_attributes }}>
+                      {%- if block.settings.heading != blank -%}
+                        <p class="dews-mat__heading">{{ block.settings.heading }}</p>
+                      {%- endif -%}
+                      <dl class="dews-mat__rows">
+                        <div data-mat="material" {% if mat_material == blank %}hidden{% endif %}>
+                          <dt>Material</dt>
+                          <dd data-mat-val>{{ mat_material }}</dd>
+                        </div>
+                        {%- if block.settings.show_finish -%}
+                          <div data-mat="finish" {% if mat_finish == blank %}hidden{% endif %}>
+                            <dt>Finish</dt>
+                            <dd data-mat-val>{{ mat_finish }}</dd>
+                          </div>
+                        {%- endif -%}
+                      </dl>
+                      {%- if block.settings.show_care -%}
+                        <div data-mat="care" {% if mat_care == blank %}hidden{% endif %}>
+                          <p class="dews-mat__care-label">Care</p>
+                          <p class="dews-mat__care" data-mat-val>{{ mat_care | newline_to_br }}</p>
+                        </div>
+                      {%- endif -%}
+                      <script type="application/json" data-dews-mat-json>
+                        {
+                        {%- for v in product.variants -%}
+                          "{{ v.id }}": {
+                            "material": {{ v.metafields.custom.material | default: product.metafields.custom.material | default: block.settings.material | json }},
+                            "finish": {{ v.metafields.custom.finish | default: product.metafields.custom.finish | default: block.settings.finish | json }},
+                            "care": {{ v.metafields.custom.care | default: product.metafields.custom.care | default: block.settings.care | json }}
+                          }{% unless forloop.last %},{% endunless %}
+                        {%- endfor -%}
+                        }
+                      </script>
+                    </div>
+                  {%- elsif request.design_mode -%}
+                    <div class="dews-mat dews-mat--empty" {{ block.shopify_attributes }}>
+                      <p class="dews-mat__heading">{{ block.settings.heading | default: 'Material & Care' }}</p>
+                      <p class="dews-mat__care">Add metafields (custom.material, finish, care) or fill the fallback values in this block's settings.</p>
+                    </div>
+                  {%- endif -%}
                 {%- when 'buy_buttons' -%}
                   {%- render 'buy-buttons',
                     block: block,
@@ -1203,6 +1251,55 @@
           "id": "note",
           "label": "Unit note",
           "default": "All dimensions in inches"
+        }
+      ]
+    },
+    {
+      "type": "material_care",
+      "name": "Material & Care",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Material & Care"
+        },
+        {
+          "type": "header",
+          "content": "Fallback values"
+        },
+        {
+          "type": "paragraph",
+          "content": "Priority: variant metafield \u2192 product metafield \u2192 these values. Keys: custom.material, custom.finish, custom.care."
+        },
+        {
+          "type": "text",
+          "id": "material",
+          "label": "Material (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "finish",
+          "label": "Finish (fallback)"
+        },
+        {
+          "type": "textarea",
+          "id": "care",
+          "label": "Care instructions (fallback)",
+          "info": "One tip per line."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_finish",
+          "label": "Show finish",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_care",
+          "label": "Show care instructions",
+          "default": true
         }
       ]
     },
