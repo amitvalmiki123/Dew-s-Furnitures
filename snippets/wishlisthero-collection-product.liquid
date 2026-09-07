@@ -27,6 +27,7 @@
     {% endif %}
 {% endfor %}
 <div data-wlh-id="{{product.id}}" 
+ data-wlh-handle="{{ product.handle }}" 
  data-wlh-link="{{url}}"
 data-wlh-variantid="{{product.selected_or_first_available_variant.id}}" 
  data-wlh-price="{{product.selected_or_first_available_variant.price | remove: '.' | remove: ',' | divided_by: 100.0 }}" 
