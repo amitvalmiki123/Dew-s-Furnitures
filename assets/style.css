@@ -752,10 +752,10 @@ cart-drawer .product-option dd { margin: 0 !important; word-break: break-word; d
 .product__tools .wishlist-hero-custom-button.wishlisthero-floating { position: relative !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; margin: 0 !important }
 .product__tools .wishlist-hero-custom-button:empty { display: none }
 .product__tools .wishlist-hero-custom-button a,
-.product__tools .wishlist-hero-custom-button button { position: static !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; float: none !important; width: 38px !important; height: 38px !important; min-width: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; display: grid !important; place-items: center; background: rgba(251, 250, 248, 0.95); border: 0; border-radius: var(--r-pill); color: var(--ink-2); box-shadow: var(--shadow-xs); line-height: 1; transition: background 0.25s var(--ease), color 0.25s var(--ease) }
+.product__tools .wishlist-hero-custom-button button { position: static !important; top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; transform: none !important; float: none !important; width: 38px !important; height: 38px !important; min-width: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; display: grid !important; place-items: center; background: rgba(251, 250, 248, 0.95) !important; border: 0 !important; border-radius: var(--r-pill) !important; color: var(--ink-2) !important; opacity: 1 !important; box-shadow: var(--shadow-xs) !important; line-height: 1; transition: background 0.25s var(--ease), color 0.25s var(--ease) }
 .product__tools .wishlist-hero-custom-button a:hover,
-.product__tools .wishlist-hero-custom-button button:hover { background: var(--ink); color: #fff }
-.product__tools .wishlist-hero-custom-button svg { width: 17px; height: 17px }
+.product__tools .wishlist-hero-custom-button button:hover { background: var(--ink) !important; color: #fff !important; opacity: 1 !important }
+.product__tools .wishlist-hero-custom-button svg { width: 17px !important; height: 17px !important }
 
 /* Touch devices have no hover — keep wishlist/quickview reachable */
 @media (hover: none) {
