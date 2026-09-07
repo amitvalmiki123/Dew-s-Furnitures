@@ -268,3 +268,18 @@
 /* Exact equal heights: ATC = Wishlist = Buy (incl. branded express buttons) */
 .dews-product .product-form__submit { height: 3rem; }
 .dews-product .shopify-payment-button__button { height: 3rem !important; }
+
+/* =====================================================================
+   Dimensions block (variant-aware; values swap via dews-pdp.js)
+===================================================================== */
+.dews-product .dews-dims { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--dews-line); }
+.dews-product .dews-dims__heading { font-size: 0.875rem; font-weight: 600; color: var(--dews-ink-soft); margin: 0 0 0.75rem; }
+.dews-product .dews-dims__list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; list-style: none; margin: 0; padding: 0; }
+.dews-product .dews-dims__list li { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; background: var(--dews-cream); border: 1px solid var(--dews-line); border-radius: 8px; padding: 0.7rem 0.4rem; }
+.dews-product .dews-dims__list li[hidden] { display: none; }
+.dews-product .dews-dims__list svg { width: 1.1rem; height: 1.1rem; color: var(--dews-rust); }
+.dews-product .dews-dims__label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dews-muted); }
+.dews-product .dews-dims__val { font-size: 0.85rem; font-weight: 700; color: var(--dews-ink); }
+.dews-product .dews-dims__note { font-size: 0.72rem; color: var(--dews-muted); margin: 0.6rem 0 0; }
+.dews-product .dews-dims--empty { border: 1px dashed var(--dews-line); border-radius: 8px; padding: 1rem; }
+@media screen and (max-width: 749px) { .dews-product .dews-dims__list { grid-template-columns: repeat(2, 1fr); } }

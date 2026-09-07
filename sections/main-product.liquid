@@ -43,6 +43,7 @@
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'dews-wishlist-pdp.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'dews-pdp.js' | asset_url }}" defer="defer"></script>"
   {%- if product.quantity_price_breaks_configured? -%}
     <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
@@ -555,6 +556,65 @@
                     block: block,
                     product_form_id: product_form_id
                   %}
+                {%- when 'dimensions' -%}
+                  {%- liquid
+                    assign current_variant = product.selected_or_first_available_variant
+                    assign dim_w = current_variant.metafields.custom.width | default: product.metafields.custom.width | default: block.settings.width
+                    assign dim_d = current_variant.metafields.custom.depth | default: product.metafields.custom.depth | default: block.settings.depth
+                    assign dim_h = current_variant.metafields.custom.height | default: product.metafields.custom.height | default: block.settings.height
+                    assign dim_seat = current_variant.metafields.custom.seat_height | default: product.metafields.custom.seat_height | default: block.settings.seat_height
+                  -%}
+                  {%- if dim_w != blank or dim_d != blank or dim_h != blank or dim_seat != blank -%}
+                    <div class="dews-dims" data-dews-dims {{ block.shopify_attributes }}>
+                      {%- if block.settings.heading != blank -%}
+                        <p class="dews-dims__heading">{{ block.settings.heading }}</p>
+                      {%- endif -%}
+                      <ul class="dews-dims__list">
+                        <li data-dim="w" {% if dim_w == blank %}hidden{% endif %}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg>
+                          <span class="dews-dims__label">Width</span>
+                          <strong class="dews-dims__val" data-dim-val>{{ dim_w }}</strong>
+                        </li>
+                        <li data-dim="d" {% if dim_d == blank %}hidden{% endif %}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 19L19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg>
+                          <span class="dews-dims__label">Depth</span>
+                          <strong class="dews-dims__val" data-dim-val>{{ dim_d }}</strong>
+                        </li>
+                        <li data-dim="h" {% if dim_h == blank %}hidden{% endif %}>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v18M12 3L9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg>
+                          <span class="dews-dims__label">Height</span>
+                          <strong class="dews-dims__val" data-dim-val>{{ dim_h }}</strong>
+                        </li>
+                        {%- if block.settings.show_seat -%}
+                          <li data-dim="seat" {% if dim_seat == blank %}hidden{% endif %}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg>
+                            <span class="dews-dims__label">Seat height</span>
+                            <strong class="dews-dims__val" data-dim-val>{{ dim_seat }}</strong>
+                          </li>
+                        {%- endif -%}
+                      </ul>
+                      {%- if block.settings.note != blank -%}
+                        <p class="dews-dims__note">{{ block.settings.note }}</p>
+                      {%- endif -%}
+                      <script type="application/json" data-dews-dims-json>
+                        {
+                        {%- for v in product.variants -%}
+                          "{{ v.id }}": {
+                            "w": {{ v.metafields.custom.width | default: product.metafields.custom.width | default: block.settings.width | json }},
+                            "d": {{ v.metafields.custom.depth | default: product.metafields.custom.depth | default: block.settings.depth | json }},
+                            "h": {{ v.metafields.custom.height | default: product.metafields.custom.height | default: block.settings.height | json }},
+                            "seat": {{ v.metafields.custom.seat_height | default: product.metafields.custom.seat_height | default: block.settings.seat_height | json }}
+                          }{% unless forloop.last %},{% endunless %}
+                        {%- endfor -%}
+                        }
+                      </script>
+                    </div>
+                  {%- elsif request.design_mode -%}
+                    <div class="dews-dims dews-dims--empty" {{ block.shopify_attributes }}>
+                      <p class="dews-dims__heading">{{ block.settings.heading | default: 'Dimensions' }}</p>
+                      <p class="dews-dims__note">Add metafields (custom.width, depth, height, seat_height) or fill the fallback values in this block's settings.</p>
+                    </div>
+                  {%- endif -%}
                 {%- when 'buy_buttons' -%}
                   {%- render 'buy-buttons',
                     block: block,
@@ -1090,6 +1150,59 @@
             }
           ],
           "default": "circle"
+        }
+      ]
+    },
+    {
+      "type": "dimensions",
+      "name": "Dimensions",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Dimensions"
+        },
+        {
+          "type": "header",
+          "content": "Fallback values"
+        },
+        {
+          "type": "paragraph",
+          "content": "Priority: variant metafield \u2192 product metafield \u2192 these values. Metafield keys: custom.width, custom.depth, custom.height, custom.seat_height."
+        },
+        {
+          "type": "text",
+          "id": "width",
+          "label": "Width (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "depth",
+          "label": "Depth (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "height",
+          "label": "Height (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "seat_height",
+          "label": "Seat height (fallback)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_seat",
+          "label": "Show seat height",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Unit note",
+          "default": "All dimensions in inches"
         }
       ]
     },
