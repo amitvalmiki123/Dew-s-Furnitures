@@ -1,0 +1,79 @@
+{%- comment -%}
+  ============================================================================
+  Dew's Furniture — resolve ONE spec value for ONE variant
+  ============================================================================
+  Priority — most specific wins (first non-empty is used):
+    1. VARIANT metafield      -> source "variant"   (this is what makes the
+                                 value change per size, e.g. 1 Seater vs 2 Seater)
+    2. Per-option size map    -> source "size"      (from the block settings)
+    3. PRODUCT metafield      -> source "product"   (same for every variant)
+    4. Static fallback        -> source "fallback"
+
+  The size map sits ABOVE the product metafield on purpose: a per-size value is
+  more specific than one product-wide value, so it must win.
+
+  Accepts
+    variant       : {Object} the variant to resolve for
+    product_value : {String} pre-resolved PRODUCT-level value (pass '' if none)
+    namespace     : {String} metafield namespace
+    key           : {String} metafield key
+    size_map      : {String} one "Option value: value" entry per line
+    fallback      : {String} static value
+
+  Outputs
+    "<value>~^~<source>"  — always exactly two parts, value may be empty.
+{%- endcomment -%}
+{%- liquid
+  assign dews_val = ''
+  assign dews_src = ''
+-%}
+{%- capture dews_v -%}
+  {%- render 'dews-mf-value', owner: variant, namespace: namespace, key: key -%}
+{%- endcapture -%}
+{%- assign dews_val = dews_v | strip -%}
+
+{%- if dews_val != blank -%}
+  {%- assign dews_src = 'variant' -%}
+{%- endif -%}
+
+{%- comment -%}---- 2. size map: "1 Seater: 72 W x 34 D x 31 H in" ----{%- endcomment -%}
+{%- if dews_val == blank and size_map != blank and variant != blank -%}
+  {%- assign dews_lines = size_map | newline_to_br | split: '<br />' -%}
+  {%- for dews_line in dews_lines -%}
+    {%- if dews_val == blank and dews_line contains ':' -%}
+      {%- assign dews_lp = dews_line | split: ':' -%}
+      {%- assign dews_lk_raw = dews_lp[0] | strip -%}
+      {%- assign dews_lk = dews_lk_raw | downcase -%}
+      {%- if dews_lk != blank -%}
+        {%- assign dews_lv = dews_line | remove_first: dews_lk_raw | remove_first: ':' | strip -%}
+        {%- for dews_ov in variant.options -%}
+          {%- assign dews_ovd = dews_ov | strip | downcase -%}
+          {%- if dews_val == blank and dews_ovd == dews_lk -%}
+            {%- assign dews_val = dews_lv -%}
+            {%- assign dews_src = 'size' -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- comment -%} last resort: option value appears inside the variant title {%- endcomment -%}
+        {%- assign dews_vtitle = variant.title | default: '' | downcase -%}
+        {%- if dews_val == blank and dews_vtitle contains dews_lk -%}
+          {%- assign dews_val = dews_lv -%}
+          {%- assign dews_src = 'size' -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%}---- 3. product metafield ----{%- endcomment -%}
+{%- if dews_val == blank and product_value != blank -%}
+  {%- assign dews_val = product_value -%}
+  {%- assign dews_src = 'product' -%}
+{%- endif -%}
+
+{%- comment -%}---- 4. static fallback ----{%- endcomment -%}
+{%- if dews_val == blank and fallback != blank -%}
+  {%- assign dews_val = fallback | strip -%}
+  {%- assign dews_src = 'fallback' -%}
+{%- endif -%}
+
+{{- dews_val -}}~^~{{- dews_src -}}

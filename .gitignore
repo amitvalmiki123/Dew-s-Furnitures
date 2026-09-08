@@ -1,0 +1,8 @@
+# Python / Node artefacts from the dev tooling in tools/
+__pycache__/
+*.pyc
+node_modules/
+
+# Local scratch
+*.bak
+.DS_Store

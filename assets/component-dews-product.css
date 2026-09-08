@@ -270,31 +270,178 @@
 .dews-product .shopify-payment-button__button { height: 3rem !important; }
 
 /* =====================================================================
-   Dimensions block (variant-aware; values swap via dews-pdp.js)
+   Variant-aware spec blocks — "Dimensions" and "Material & Care"
+   Markup : snippets/dews-spec-block.liquid  ->  <dews-variant-info>
+   Sync   : assets/dews-pdp.js
+   Two layouts share one class namespace:
+     .dews-spec--tiles  (icon grid, used by Dimensions)
+     .dews-spec--rows   (label / value list, used by Material & Care)
 ===================================================================== */
-.dews-product .dews-dims { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--dews-line); }
-.dews-product .dews-dims__heading { font-size: 0.875rem; font-weight: 600; color: var(--dews-ink-soft); margin: 0 0 0.75rem; }
-.dews-product .dews-dims__list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; list-style: none; margin: 0; padding: 0; }
-.dews-product .dews-dims__list li { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; text-align: center; background: var(--dews-cream); border: 1px solid var(--dews-line); border-radius: 8px; padding: 0.7rem 0.4rem; }
-.dews-product .dews-dims__list li[hidden] { display: none; }
-.dews-product .dews-dims__list svg { width: 1.1rem; height: 1.1rem; color: var(--dews-rust); }
-.dews-product .dews-dims__label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dews-muted); }
-.dews-product .dews-dims__val { font-size: 0.85rem; font-weight: 700; color: var(--dews-ink); }
-.dews-product .dews-dims__note { font-size: 0.72rem; color: var(--dews-muted); margin: 0.6rem 0 0; }
-.dews-product .dews-dims--empty { border: 1px dashed var(--dews-line); border-radius: 8px; padding: 1rem; }
-@media screen and (max-width: 749px) { .dews-product .dews-dims__list { grid-template-columns: repeat(2, 1fr); } }
+.dews-spec {
+  display: block;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--dews-line, #e9e4da);
+}
+.dews-spec__heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__val {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dews-ink, #1c1a17);
+}
+.dews-spec__val--multi {
+  font-weight: 500;
+  line-height: 1.65;
+  white-space: pre-line;          /* keeps multi-line care instructions */
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.72rem;
+  color: var(--dews-muted, #7a746a);
+}
 
-/* =====================================================================
-   Material & Care block (variant-aware; values swap via dews-pdp.js)
-===================================================================== */
-.dews-product .dews-mat { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--dews-line); }
-.dews-product .dews-mat__heading { font-size: 0.875rem; font-weight: 600; color: var(--dews-ink-soft); margin: 0 0 0.75rem; }
-.dews-product .dews-mat__rows { display: grid; gap: 0.5rem; margin: 0 0 0.75rem; }
-.dews-product .dews-mat__rows > div { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.75rem; align-items: baseline; background: var(--dews-cream); border: 1px solid var(--dews-line); border-radius: 8px; padding: 0.6rem 0.8rem; }
-.dews-product .dews-mat__rows > div[hidden] { display: none; }
-.dews-product .dews-mat__rows dt { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dews-muted); margin: 0; }
-.dews-product .dews-mat__rows dd { margin: 0; font-size: 0.85rem; font-weight: 500; color: var(--dews-ink); }
-.dews-product [data-mat='care'][hidden] { display: none; }
-.dews-product .dews-mat__care-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dews-muted); margin: 0 0 0.3rem; }
-.dews-product .dews-mat__care { font-size: 0.85rem; line-height: 1.65; color: var(--dews-ink-soft); margin: 0; }
-.dews-product .dews-mat--empty { border: 1px dashed var(--dews-line); border-radius: 8px; padding: 1rem; }
+/* ---- tiles layout (Dimensions) ------------------------------------- */
+.dews-spec--cols-2 { --dews-spec-cols: 2; }
+.dews-spec--cols-3 { --dews-spec-cols: 3; }
+.dews-spec--cols-4 { --dews-spec-cols: 4; }
+.dews-spec--tiles .dews-spec__list {
+  display: grid;
+  grid-template-columns: repeat(var(--dews-spec-cols, 4), minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dews-spec--tiles .dews-spec__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.7rem 0.4rem;
+  text-align: center;
+  background: var(--dews-cream, #f7f4ee);
+  border: 1px solid var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+.dews-spec--tiles .dews-spec__item svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--dews-rust, #c1502e);
+}
+
+/* ---- rows layout (Material & Care) --------------------------------- */
+.dews-spec--rows .dews-spec__rows {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+.dews-spec--rows .dews-spec__row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0.8rem;
+  background: var(--dews-cream, #f7f4ee);
+  border: 1px solid var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+
+/* ---- empty rows must stay hidden even against display rules -------- */
+.dews-spec__item[hidden],
+.dews-spec__row[hidden] { display: none !important; }
+
+/* ---- unavailable option combination -------------------------------- */
+.dews-spec__unavailable {
+  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dews-rust-dark, #a4401f);
+}
+.dews-spec__unavailable[hidden] { display: none !important; }
+.dews-spec.is-unavailable .dews-spec__list,
+.dews-spec.is-unavailable .dews-spec__rows { opacity: 0.45; }
+
+/* ---- brief highlight when a value actually changes ----------------- */
+@keyframes dews-spec-flash {
+  from { background-color: var(--dews-surface, #eeeae1); }
+  to   { background-color: var(--dews-cream, #f7f4ee); }
+}
+.dews-spec__item.is-updated,
+.dews-spec__row.is-updated { animation: dews-spec-flash 0.55s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .dews-spec__item.is-updated,
+  .dews-spec__row.is-updated { animation: none; }
+}
+
+/* ---- editor-only empty state --------------------------------------- */
+.dews-spec--empty {
+  padding: 1rem;
+  border: 1px dashed var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+
+/* ---- editor-only debug table --------------------------------------- */
+.dews-spec__debug {
+  margin-top: 0.9rem;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px dashed var(--dews-rust, #c1502e);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+.dews-spec__debug-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__debug-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+.dews-spec__debug-table th,
+.dews-spec__debug-table td {
+  padding: 0.3rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--dews-line, #e9e4da);
+}
+.dews-spec__debug-table thead th {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__debug-src {
+  display: inline-block;
+  min-width: 1.1rem;
+  margin-right: 0.35rem;
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-align: center;
+  background: var(--dews-surface, #eeeae1);
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__debug-src[data-src="V"] { background: #dcf2e2; color: #1c6b34; }  /* variant metafield  */
+.dews-spec__debug-src[data-src="P"] { background: #fff1d6; color: #8a5a00; }  /* product metafield  */
+.dews-spec__debug-src[data-src="S"] { background: #e2e9ff; color: #274690; }  /* per-size map       */
+.dews-spec__debug-src[data-src="F"] { background: #f0e6ff; color: #5b3a99; }  /* static fallback    */
+.dews-spec__debug-src[data-src="-"] { background: #ffe1e1; color: #a01c1c; }  /* nothing found      */
+
+/* ---- mobile -------------------------------------------------------- */
+@media screen and (max-width: 749px) {
+  .dews-spec--tiles .dews-spec__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dews-spec--rows .dews-spec__row { grid-template-columns: 5.5rem minmax(0, 1fr); }
+}

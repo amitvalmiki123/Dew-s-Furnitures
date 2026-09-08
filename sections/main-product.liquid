@@ -43,7 +43,7 @@
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
   <script src="{{ 'dews-wishlist-pdp.js' | asset_url }}" defer="defer"></script>
-  <script src="{{ 'dews-pdp.js' | asset_url }}" defer="defer"></script>"
+  <script src="{{ 'dews-pdp.js' | asset_url }}" defer="defer"></script>
   {%- if product.quantity_price_breaks_configured? -%}
     <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
@@ -557,112 +557,25 @@
                     product_form_id: product_form_id
                   %}
                 {%- when 'dimensions' -%}
-                  {%- liquid
-                    assign current_variant = product.selected_or_first_available_variant
-                    assign dim_w = current_variant.metafields.custom.width | default: product.metafields.custom.width | default: block.settings.width
-                    assign dim_d = current_variant.metafields.custom.depth | default: product.metafields.custom.depth | default: block.settings.depth
-                    assign dim_h = current_variant.metafields.custom.height | default: product.metafields.custom.height | default: block.settings.height
-                    assign dim_seat = current_variant.metafields.custom.seat_height | default: product.metafields.custom.seat_height | default: block.settings.seat_height
+                  {%- assign dews_dims_id = 'DewsDimensions-' | append: section.id -%}
+                  {%- render 'dews-spec-block',
+                    product: product,
+                    block: block,
+                    settings: block.settings,
+                    layout: 'tiles',
+                    element_id: dews_dims_id,
+                    section_id: section.id
                   -%}
-                  {%- if dim_w != blank or dim_d != blank or dim_h != blank or dim_seat != blank -%}
-                    <div class="dews-dims" data-dews-dims {{ block.shopify_attributes }}>
-                      {%- if block.settings.heading != blank -%}
-                        <p class="dews-dims__heading">{{ block.settings.heading }}</p>
-                      {%- endif -%}
-                      <ul class="dews-dims__list">
-                        <li data-dim="w" {% if dim_w == blank %}hidden{% endif %}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg>
-                          <span class="dews-dims__label">Width</span>
-                          <strong class="dews-dims__val" data-dim-val>{{ dim_w }}</strong>
-                        </li>
-                        <li data-dim="d" {% if dim_d == blank %}hidden{% endif %}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 19L19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg>
-                          <span class="dews-dims__label">Depth</span>
-                          <strong class="dews-dims__val" data-dim-val>{{ dim_d }}</strong>
-                        </li>
-                        <li data-dim="h" {% if dim_h == blank %}hidden{% endif %}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v18M12 3L9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg>
-                          <span class="dews-dims__label">Height</span>
-                          <strong class="dews-dims__val" data-dim-val>{{ dim_h }}</strong>
-                        </li>
-                        {%- if block.settings.show_seat -%}
-                          <li data-dim="seat" {% if dim_seat == blank %}hidden{% endif %}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg>
-                            <span class="dews-dims__label">Seat height</span>
-                            <strong class="dews-dims__val" data-dim-val>{{ dim_seat }}</strong>
-                          </li>
-                        {%- endif -%}
-                      </ul>
-                      {%- if block.settings.note != blank -%}
-                        <p class="dews-dims__note">{{ block.settings.note }}</p>
-                      {%- endif -%}
-                      <script type="application/json" data-dews-dims-json>
-                        {
-                        {%- for v in product.variants -%}
-                          "{{ v.id }}": {
-                            "w": {{ v.metafields.custom.width | default: product.metafields.custom.width | default: block.settings.width | json }},
-                            "d": {{ v.metafields.custom.depth | default: product.metafields.custom.depth | default: block.settings.depth | json }},
-                            "h": {{ v.metafields.custom.height | default: product.metafields.custom.height | default: block.settings.height | json }},
-                            "seat": {{ v.metafields.custom.seat_height | default: product.metafields.custom.seat_height | default: block.settings.seat_height | json }}
-                          }{% unless forloop.last %},{% endunless %}
-                        {%- endfor -%}
-                        }
-                      </script>
-                    </div>
-                  {%- elsif request.design_mode -%}
-                    <div class="dews-dims dews-dims--empty" {{ block.shopify_attributes }}>
-                      <p class="dews-dims__heading">{{ block.settings.heading | default: 'Dimensions' }}</p>
-                      <p class="dews-dims__note">Add metafields (custom.width, depth, height, seat_height) or fill the fallback values in this block's settings.</p>
-                    </div>
-                  {%- endif -%}
                 {%- when 'material_care' -%}
-                  {%- liquid
-                    assign mat_variant = product.selected_or_first_available_variant
-                    assign mat_material = mat_variant.metafields.custom.material | default: product.metafields.custom.material | default: block.settings.material
-                    assign mat_finish = mat_variant.metafields.custom.finish | default: product.metafields.custom.finish | default: block.settings.finish
-                    assign mat_care = mat_variant.metafields.custom.care | default: product.metafields.custom.care | default: block.settings.care
+                  {%- assign dews_mat_id = 'DewsMaterials-' | append: section.id -%}
+                  {%- render 'dews-spec-block',
+                    product: product,
+                    block: block,
+                    settings: block.settings,
+                    layout: 'rows',
+                    element_id: dews_mat_id,
+                    section_id: section.id
                   -%}
-                  {%- if mat_material != blank or mat_finish != blank or mat_care != blank -%}
-                    <div class="dews-mat" data-dews-mat {{ block.shopify_attributes }}>
-                      {%- if block.settings.heading != blank -%}
-                        <p class="dews-mat__heading">{{ block.settings.heading }}</p>
-                      {%- endif -%}
-                      <dl class="dews-mat__rows">
-                        <div data-mat="material" {% if mat_material == blank %}hidden{% endif %}>
-                          <dt>Material</dt>
-                          <dd data-mat-val>{{ mat_material }}</dd>
-                        </div>
-                        {%- if block.settings.show_finish -%}
-                          <div data-mat="finish" {% if mat_finish == blank %}hidden{% endif %}>
-                            <dt>Finish</dt>
-                            <dd data-mat-val>{{ mat_finish }}</dd>
-                          </div>
-                        {%- endif -%}
-                      </dl>
-                      {%- if block.settings.show_care -%}
-                        <div data-mat="care" {% if mat_care == blank %}hidden{% endif %}>
-                          <p class="dews-mat__care-label">Care</p>
-                          <p class="dews-mat__care" data-mat-val>{{ mat_care | newline_to_br }}</p>
-                        </div>
-                      {%- endif -%}
-                      <script type="application/json" data-dews-mat-json>
-                        {
-                        {%- for v in product.variants -%}
-                          "{{ v.id }}": {
-                            "material": {{ v.metafields.custom.material | default: product.metafields.custom.material | default: block.settings.material | json }},
-                            "finish": {{ v.metafields.custom.finish | default: product.metafields.custom.finish | default: block.settings.finish | json }},
-                            "care": {{ v.metafields.custom.care | default: product.metafields.custom.care | default: block.settings.care | json }}
-                          }{% unless forloop.last %},{% endunless %}
-                        {%- endfor -%}
-                        }
-                      </script>
-                    </div>
-                  {%- elsif request.design_mode -%}
-                    <div class="dews-mat dews-mat--empty" {{ block.shopify_attributes }}>
-                      <p class="dews-mat__heading">{{ block.settings.heading | default: 'Material & Care' }}</p>
-                      <p class="dews-mat__care">Add metafields (custom.material, finish, care) or fill the fallback values in this block's settings.</p>
-                    </div>
-                  {%- endif -%}
                 {%- when 'buy_buttons' -%}
                   {%- render 'buy-buttons',
                     block: block,
@@ -1203,9 +1116,13 @@
     },
     {
       "type": "dimensions",
-      "name": "Dimensions",
+      "name": "Dimensions (variant-aware)",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Values follow the SELECTED VARIANT. Priority for every row, most specific first: variant metafield \u2192 per-option fallback map \u2192 product metafield \u2192 static fallback. Metafields must be defined on VARIANTS (Admin \u2192 Settings \u2192 Custom data \u2192 Products \u2192 Variants tab), otherwise every size shows the same value. Switch on \u201cShow debug table\u201d below to see exactly where each value came from."
+        },
         {
           "type": "text",
           "id": "heading",
@@ -1213,52 +1130,302 @@
           "default": "Dimensions"
         },
         {
-          "type": "header",
-          "content": "Fallback values"
-        },
-        {
-          "type": "paragraph",
-          "content": "Priority: variant metafield \u2192 product metafield \u2192 these values. Metafield keys: custom.width, custom.depth, custom.height, custom.seat_height."
-        },
-        {
-          "type": "text",
-          "id": "width",
-          "label": "Width (fallback)"
-        },
-        {
-          "type": "text",
-          "id": "depth",
-          "label": "Depth (fallback)"
-        },
-        {
-          "type": "text",
-          "id": "height",
-          "label": "Height (fallback)"
-        },
-        {
-          "type": "text",
-          "id": "seat_height",
-          "label": "Seat height (fallback)"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_seat",
-          "label": "Show seat height",
-          "default": true
+          "type": "select",
+          "id": "columns",
+          "label": "Tiles per row",
+          "options": [
+            {
+              "value": 2,
+              "label": "2"
+            },
+            {
+              "value": 3,
+              "label": "3"
+            },
+            {
+              "value": 4,
+              "label": "4"
+            }
+          ],
+          "default": 4
         },
         {
           "type": "text",
           "id": "note",
-          "label": "Unit note",
+          "label": "Note under the values",
           "default": "All dimensions in inches"
+        },
+        {
+          "type": "header",
+          "content": "Data source"
+        },
+        {
+          "type": "select",
+          "id": "source",
+          "label": "How the values are stored",
+          "options": [
+            {
+              "value": "rows",
+              "label": "One metafield per row (recommended)"
+            },
+            {
+              "value": "json",
+              "label": "Auto rows from one JSON metafield"
+            }
+          ],
+          "default": "rows"
+        },
+        {
+          "type": "text",
+          "id": "namespace",
+          "label": "Metafield namespace",
+          "default": "custom"
+        },
+        {
+          "type": "text",
+          "id": "json_key",
+          "label": "JSON metafield key",
+          "default": "dimensions",
+          "info": "Only used when \u201cHow the values are stored\u201d is set to JSON. Each property of that JSON becomes a row."
+        },
+        {
+          "type": "header",
+          "content": "Row 1"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_1_enabled",
+          "label": "Show this row",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "row_1_label",
+          "label": "Label",
+          "default": "Width"
+        },
+        {
+          "type": "text",
+          "id": "row_1_key",
+          "label": "Metafield key",
+          "default": "width",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_1_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_1_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 2"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_2_enabled",
+          "label": "Show this row",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "row_2_label",
+          "label": "Label",
+          "default": "Depth"
+        },
+        {
+          "type": "text",
+          "id": "row_2_key",
+          "label": "Metafield key",
+          "default": "depth",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_2_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_2_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 3"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_3_enabled",
+          "label": "Show this row",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "row_3_label",
+          "label": "Label",
+          "default": "Height"
+        },
+        {
+          "type": "text",
+          "id": "row_3_key",
+          "label": "Metafield key",
+          "default": "height",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_3_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_3_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 4"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_4_enabled",
+          "label": "Show this row",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "row_4_label",
+          "label": "Label",
+          "default": "Seat height"
+        },
+        {
+          "type": "text",
+          "id": "row_4_key",
+          "label": "Metafield key",
+          "default": "seat_height",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_4_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_4_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 5"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_5_enabled",
+          "label": "Show this row",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "row_5_label",
+          "label": "Label",
+          "default": "Weight"
+        },
+        {
+          "type": "text",
+          "id": "row_5_key",
+          "label": "Metafield key",
+          "default": "weight",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_5_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_5_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 6"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_6_enabled",
+          "label": "Show this row",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "row_6_label",
+          "label": "Label",
+          "default": "Seating capacity"
+        },
+        {
+          "type": "text",
+          "id": "row_6_key",
+          "label": "Metafield key",
+          "default": "capacity",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_6_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_6_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Advanced"
+        },
+        {
+          "type": "text",
+          "id": "unavailable_text",
+          "label": "Message for unavailable combinations",
+          "default": "This combination is currently unavailable."
+        },
+        {
+          "type": "checkbox",
+          "id": "debug",
+          "label": "Show debug table",
+          "info": "Theme editor only. Lists every variant with its resolved value and where it came from (V=variant, P=product, S=size map, F=fallback).",
+          "default": false
         }
       ]
     },
     {
       "type": "material_care",
-      "name": "Material & Care",
+      "name": "Material & Care (variant-aware)",
       "limit": 1,
       "settings": [
+        {
+          "type": "paragraph",
+          "content": "Values follow the SELECTED VARIANT. Priority for every row, most specific first: variant metafield \u2192 per-option fallback map \u2192 product metafield \u2192 static fallback. Metafields must be defined on VARIANTS (Admin \u2192 Settings \u2192 Custom data \u2192 Products \u2192 Variants tab), otherwise every size shows the same value. Switch on \u201cShow debug table\u201d below to see exactly where each value came from."
+        },
         {
           "type": "text",
           "id": "heading",
@@ -1267,39 +1434,263 @@
         },
         {
           "type": "header",
-          "content": "Fallback values"
+          "content": "Data source"
         },
         {
-          "type": "paragraph",
-          "content": "Priority: variant metafield \u2192 product metafield \u2192 these values. Keys: custom.material, custom.finish, custom.care."
+          "type": "select",
+          "id": "source",
+          "label": "How the values are stored",
+          "options": [
+            {
+              "value": "rows",
+              "label": "One metafield per row (recommended)"
+            },
+            {
+              "value": "json",
+              "label": "Auto rows from one JSON metafield"
+            }
+          ],
+          "default": "rows"
         },
         {
           "type": "text",
-          "id": "material",
-          "label": "Material (fallback)"
+          "id": "namespace",
+          "label": "Metafield namespace",
+          "default": "custom"
         },
         {
           "type": "text",
-          "id": "finish",
-          "label": "Finish (fallback)"
+          "id": "json_key",
+          "label": "JSON metafield key",
+          "default": "dimensions",
+          "info": "Only used when \u201cHow the values are stored\u201d is set to JSON. Each property of that JSON becomes a row."
+        },
+        {
+          "type": "header",
+          "content": "Row 1"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_1_enabled",
+          "label": "Show this row",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "row_1_label",
+          "label": "Label",
+          "default": "Material"
+        },
+        {
+          "type": "text",
+          "id": "row_1_key",
+          "label": "Metafield key",
+          "default": "material",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_1_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
         },
         {
           "type": "textarea",
-          "id": "care",
-          "label": "Care instructions (fallback)",
-          "info": "One tip per line."
+          "id": "row_1_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 2"
         },
         {
           "type": "checkbox",
-          "id": "show_finish",
-          "label": "Show finish",
+          "id": "row_2_enabled",
+          "label": "Show this row",
           "default": true
         },
         {
+          "type": "text",
+          "id": "row_2_label",
+          "label": "Label",
+          "default": "Finish"
+        },
+        {
+          "type": "text",
+          "id": "row_2_key",
+          "label": "Metafield key",
+          "default": "finish",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_2_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_2_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 3"
+        },
+        {
           "type": "checkbox",
-          "id": "show_care",
-          "label": "Show care instructions",
+          "id": "row_3_enabled",
+          "label": "Show this row",
           "default": true
+        },
+        {
+          "type": "text",
+          "id": "row_3_label",
+          "label": "Label",
+          "default": "Care"
+        },
+        {
+          "type": "text",
+          "id": "row_3_key",
+          "label": "Metafield key",
+          "default": "care",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_3_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_3_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 4"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_4_enabled",
+          "label": "Show this row",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "row_4_label",
+          "label": "Label",
+          "default": "Assembly"
+        },
+        {
+          "type": "text",
+          "id": "row_4_key",
+          "label": "Metafield key",
+          "default": "assembly",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_4_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_4_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 5"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_5_enabled",
+          "label": "Show this row",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "row_5_label",
+          "label": "Label",
+          "default": "Warranty"
+        },
+        {
+          "type": "text",
+          "id": "row_5_key",
+          "label": "Metafield key",
+          "default": "warranty",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_5_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_5_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Row 6"
+        },
+        {
+          "type": "checkbox",
+          "id": "row_6_enabled",
+          "label": "Show this row",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "row_6_label",
+          "label": "Label",
+          "default": "Colour"
+        },
+        {
+          "type": "text",
+          "id": "row_6_key",
+          "label": "Metafield key",
+          "default": "color",
+          "info": "Key of the VARIANT metafield, without the namespace."
+        },
+        {
+          "type": "text",
+          "id": "row_6_fallback",
+          "label": "Static fallback value",
+          "info": "Used only when no metafield value exists for the variant."
+        },
+        {
+          "type": "textarea",
+          "id": "row_6_size_map",
+          "label": "Per-option fallback map",
+          "info": "Optional. One entry per line as  Option value: value  \u2014 matched against the variant's option values (e.g. its Size). Used only when no metafield value exists. Example:\n1 Seater: 38 in\n2 Seater: 58 in"
+        },
+        {
+          "type": "header",
+          "content": "Advanced"
+        },
+        {
+          "type": "text",
+          "id": "unavailable_text",
+          "label": "Message for unavailable combinations",
+          "default": "This combination is currently unavailable."
+        },
+        {
+          "type": "checkbox",
+          "id": "debug",
+          "label": "Show debug table",
+          "info": "Theme editor only. Lists every variant with its resolved value and where it came from (V=variant, P=product, S=size map, F=fallback).",
+          "default": false
         }
       ]
     },
