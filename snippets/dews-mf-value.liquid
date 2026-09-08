@@ -1,0 +1,120 @@
+{%- comment -%}
+  ============================================================================
+  Dew's Furniture — safe metafield -> plain text renderer
+  ============================================================================
+  WHY THIS EXISTS
+    `variant.metafields.custom.width` returns a METAFIELD OBJECT, not a string.
+    The previous build piped that object straight into `| json`, which produced
+    malformed JSON. JSON.parse then threw, the catch silently returned, and the
+    dimensions never swapped on variant change. This snippet always emits a
+    plain, escaped string — safe to output AND safe to pipe into `| json`.
+
+  ACCEPTS
+    owner     : {Object}  a product or a product variant
+    namespace : {String}  metafield namespace, defaults to "custom"
+    key       : {String}  metafield key
+
+  OUTPUTS
+    The value as plain text, or nothing at all when the metafield is missing,
+    empty, or of a type with no single-line form (e.g. `json`). Never raises.
+
+  USAGE
+    {%- capture v -%}
+      {% render 'dews-mf-value', owner: variant, namespace: 'custom', key: 'width' %}
+    {%- endcapture -%}
+    {%- assign v = v | strip -%}
+{%- endcomment -%}
+{%- liquid
+  assign dews_ns = namespace | default: 'custom' | strip
+  assign dews_key = key | default: '' | strip
+  assign dews_mf = nil
+
+  if owner != blank and dews_key != blank
+    if dews_ns == 'custom'
+      # Fast path for Shopify's default namespace. Literal key access is
+      # guaranteed to work and also protects keys that collide with Liquid
+      # filters (size, first, last).
+      case dews_key
+        when 'width'
+          assign dews_mf = owner.metafields.custom.width
+        when 'depth'
+          assign dews_mf = owner.metafields.custom.depth
+        when 'height'
+          assign dews_mf = owner.metafields.custom.height
+        when 'length'
+          assign dews_mf = owner.metafields.custom.length
+        when 'seat_height'
+          assign dews_mf = owner.metafields.custom.seat_height
+        when 'seat_depth'
+          assign dews_mf = owner.metafields.custom.seat_depth
+        when 'arm_height'
+          assign dews_mf = owner.metafields.custom.arm_height
+        when 'weight'
+          assign dews_mf = owner.metafields.custom.weight
+        when 'capacity'
+          assign dews_mf = owner.metafields.custom.capacity
+        when 'seating_capacity'
+          assign dews_mf = owner.metafields.custom.seating_capacity
+        when 'dimensions'
+          assign dews_mf = owner.metafields.custom.dimensions
+        when 'material'
+          assign dews_mf = owner.metafields.custom.material
+        when 'finish'
+          assign dews_mf = owner.metafields.custom.finish
+        when 'care'
+          assign dews_mf = owner.metafields.custom.care
+        when 'color'
+          assign dews_mf = owner.metafields.custom.color
+        when 'colour'
+          assign dews_mf = owner.metafields.custom.colour
+        when 'assembly'
+          assign dews_mf = owner.metafields.custom.assembly
+        when 'warranty'
+          assign dews_mf = owner.metafields.custom.warranty
+        else
+          # Any other key: bracket lookup — Shopify supports metafields[ns][key].
+          assign dews_mf = owner.metafields[dews_ns][dews_key]
+      endcase
+    else
+      assign dews_mf = owner.metafields[dews_ns][dews_key]
+    endif
+  endif
+-%}
+{%- if dews_mf != blank -%}
+  {%- assign dews_type = dews_mf.type | default: '' -%}
+  {%- assign dews_out = '' -%}
+
+  {%- if dews_type contains 'list' -%}
+    {%- assign dews_out = dews_mf.value | join: ', ' -%}
+  {%- elsif dews_type == 'rich_text_field' -%}
+    {%- assign dews_out = dews_mf.value | strip_html -%}
+  {%- elsif dews_type == 'boolean' -%}
+    {%- if dews_mf.value -%}
+      {%- assign dews_out = 'Yes' -%}
+    {%- else -%}
+      {%- assign dews_out = 'No' -%}
+    {%- endif -%}
+  {%- elsif dews_type == 'dimension' or dews_type == 'weight' or dews_type == 'volume' -%}
+    {%- comment -%} Native measurement types expose .amount and .unit {%- endcomment -%}
+    {%- if dews_mf.value.amount != blank -%}
+      {%- assign dews_out = dews_mf.value.amount | append: ' ' | append: dews_mf.value.unit -%}
+    {%- else -%}
+      {%- assign dews_out = dews_mf.value -%}
+    {%- endif -%}
+  {%- elsif dews_type == 'rating' -%}
+    {%- assign dews_out = dews_mf.value.rating | append: ' / ' | append: dews_mf.value.scale_max -%}
+  {%- elsif dews_type == 'date' or dews_type == 'date_time' -%}
+    {%- assign dews_out = dews_mf.value | date: '%d %b %Y' -%}
+  {%- elsif dews_type == 'json' -%}
+    {%- comment -%}
+      Structured data has no single-line form, so it is intentionally left
+      empty here. Use the block's "Auto rows from one JSON metafield" source
+      mode if your data lives in a JSON metafield.
+    {%- endcomment -%}
+    {%- assign dews_out = '' -%}
+  {%- else -%}
+    {%- assign dews_out = dews_mf.value -%}
+  {%- endif -%}
+
+  {{- dews_out | strip -}}
+{%- endif -%}

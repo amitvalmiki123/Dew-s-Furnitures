@@ -1,0 +1,203 @@
+<section class="hero" aria-labelledby="hero-title">
+  <p class="hero__rail">{{ section.settings.vertical_rail_text }}</p>
+
+  <div class="hero__content">
+    {%- if section.settings.watermark_image != blank -%}
+      {{ section.settings.watermark_image | image_url: width: 560 | image_tag: class: 'hero__watermark', aria-hidden: 'true' }}
+    {%- endif -%}
+    
+    <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow_text }}</p>
+    
+    <h1 id="hero-title">{{ section.settings.heading_html }}</h1>
+    
+    <p class="hero__lead">{{ section.settings.lead_text }}</p>
+
+    <div class="hero__ctas">
+      {%- if section.settings.btn_1_link != blank -%}
+        <a class="btn" href="{{ section.settings.btn_1_link }}">{{ section.settings.btn_1_text }} <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      {%- endif -%}
+      {%- if section.settings.btn_2_link != blank -%}
+        <a class="btn btn--ghost" href="{{ section.settings.btn_2_link }}">{{ section.settings.btn_2_text }}</a>
+      {%- endif -%}
+    </div>
+
+    <div class="hero__proof">
+      <span class="hero__proof-item"><span class="stars" aria-hidden="true">★★★★★</span> <strong>{{ section.settings.rating_number }}</strong>&nbsp;{{ section.settings.rating_text }}</span>
+      <span class="hero__proof-item"><svg aria-hidden="true"><use href="#i-truck"/></svg> {{ section.settings.shipping_text }}</span>
+      <span class="hero__proof-item"><svg aria-hidden="true"><use href="#i-rotate"/></svg> {{ section.settings.returns_text }}</span>
+    </div>
+  </div>
+
+  <div class="hero__media">
+    {%- if section.settings.main_image != blank -%}
+      {{ section.settings.main_image | image_url: width: 1500 | image_tag: fetchpriority: 'high', decoding: 'async' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag }}
+    {%- endif -%}
+
+    <!-- Dynamic Hotspots via Blocks -->
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'hotspot' -%}
+        {%- assign product = block.settings.product -%}
+        
+        <a href="{% if product != blank %}{{ product.url }}{% else %}#{% endif %}" class="hotspot" style="left:{{ block.settings.pos_x }}%; top:{{ block.settings.pos_y }}%;" aria-label="Shop {% if product != blank %}{{ product.title }}{% else %}Product{% endif %}" {{ block.shopify_attributes }}>
+          <span class="hotspot__card">
+            {%- if product != blank -%}
+              <img src="{{ product.featured_image | image_url: width: 100 }}" alt="{{ product.title | escape }}" width="52" height="52" loading="lazy">
+              <span><b>{{ product.title }}</b><span>{{ product.price | money }}</span></span>
+            {%- else -%}
+              <!-- Fallback if no product is selected -->
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' }}
+              <span><b>Select a product</b><span>$0.00</span></span>
+            {%- endif -%}
+          </span>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <a class="hero__scroll" href="#rooms">Scroll <svg aria-hidden="true"><use href="#i-chev-d"/></svg></a>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Dews Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "vertical_rail_text",
+      "label": "Vertical Rail Text",
+      "default": "Handcrafted · Solid Wood · Since Day One"
+    },
+    {
+      "type": "image_picker",
+      "id": "watermark_image",
+      "label": "Watermark Logo Image"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow Text",
+      "default": "Solid wood & hand-woven cane"
+    },
+    {
+      "type": "html",
+      "id": "heading_html",
+      "label": "Heading (HTML allowed)",
+      "default": "Furniture made<br>to be <span class='accent'>lived in.</span>"
+    },
+    {
+      "type": "textarea",
+      "id": "lead_text",
+      "label": "Lead Paragraph",
+      "default": "Kiln-dried sheesham frames, cane woven panel by panel, and linen you'll actually want to sit on. Built slowly, priced honestly, delivered to your door."
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "btn_1_text",
+      "label": "Button 1 Text",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "btn_1_link",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "btn_2_text",
+      "label": "Button 2 Text",
+      "default": "Browse by room"
+    },
+    {
+      "type": "url",
+      "id": "btn_2_link",
+      "label": "Button 2 Link"
+    },
+    {
+      "type": "header",
+      "content": "Proof Points (Bottom Row)"
+    },
+    {
+      "type": "text",
+      "id": "rating_number",
+      "label": "Rating Number",
+      "default": "4.8"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating Text",
+      "default": "average rating"
+    },
+    {
+      "type": "text",
+      "id": "shipping_text",
+      "label": "Shipping Text",
+      "default": "Free delivery over $999"
+    },
+    {
+      "type": "text",
+      "id": "returns_text",
+      "label": "Returns Text",
+      "default": "30-day returns"
+    },
+    {
+      "type": "header",
+      "content": "Hero Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Main Hero Image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Product Hotspot",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        },
+        {
+          "type": "range",
+          "id": "pos_x",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Horizontal Position (Left to Right)",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "pos_y",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Vertical Position (Top to Bottom)",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Dews Hero",
+      "blocks": [
+        { "type": "hotspot", "settings": { "pos_x": 38, "pos_y": 60 } },
+        { "type": "hotspot", "settings": { "pos_x": 16, "pos_y": 66 } },
+        { "type": "hotspot", "settings": { "pos_x": 53, "pos_y": 70 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

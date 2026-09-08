@@ -1,0 +1,12 @@
+# Files listed here are NEVER pushed to the live theme by `shopify theme push`.
+# They are repository-only: dev tooling, tests, docs and the raw theme export.
+
+theme_export__dew-s-furnitures-myshopify-com-dawn__07SEP2026-0157am.zip
+*.zip
+
+tools/
+docs/
+*.md
+
+.gitignore
+.shopifyignore

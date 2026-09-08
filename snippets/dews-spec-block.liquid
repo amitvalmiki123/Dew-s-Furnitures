@@ -1,0 +1,446 @@
+{%- comment -%}
+  ============================================================================
+  Dew's Furniture — variant-aware spec block (Dimensions / Material & Care)
+  ============================================================================
+  Renders a strip of specs whose values follow the SELECTED VARIANT.
+
+  How it stays in sync
+    * Server-side: rendered for `product.selected_or_first_available_variant`,
+      so the very first paint (and no-JS visitors, and SEO) are always correct.
+    * Client-side: every variant's resolved values are shipped as JSON in a
+      <script type="application/json"> inside this element. assets/dews-pdp.js
+      reads it on Dawn's `variantChange` pubsub event and on the product form's
+      `input[name="id"]` change event, and swaps the visible values.
+
+  Accepts
+    product    : {Object}
+    block      : {Object} the theme-editor block (nil is allowed)
+    settings   : {Object} block.settings or section.settings
+    layout     : {String} "tiles" (icon grid) or "rows" (label / value list)
+    element_id : {String} unique id, e.g. "DewsDimensions-{{ section.id }}"
+    section_id : {String} the section id — lets the JS ignore variant events
+                 coming from a different product-info on the same page
+
+  Settings read (all optional)
+    heading, note, source ("rows"|"json"), namespace, json_key, columns,
+    unavailable_text, debug,
+    row_1..row_6 : _enabled, _label, _key, _fallback, _size_map
+{%- endcomment -%}
+
+{%- liquid
+  assign dews_ns = settings.namespace | default: 'custom' | strip
+  assign dews_source = settings.source | default: 'rows'
+  assign dews_layout = layout | default: 'tiles'
+  assign dews_columns = settings.columns | default: 4
+  assign dews_current = product.selected_or_first_available_variant
+  assign dews_delim = '~~~'
+  assign dews_rowdelim = '^^^'
+  assign dews_rows_raw = ''
+
+  if dews_source == 'rows'
+    if settings.row_1_enabled
+      assign dews_rows_raw = dews_rows_raw | append: settings.row_1_label | append: dews_delim | append: settings.row_1_key | append: dews_delim | append: settings.row_1_fallback | append: dews_delim | append: settings.row_1_size_map | append: dews_rowdelim
+    endif
+    if settings.row_2_enabled
+      assign dews_rows_raw = dews_rows_raw | append: settings.row_2_label | append: dews_delim | append: settings.row_2_key | append: dews_delim | append: settings.row_2_fallback | append: dews_delim | append: settings.row_2_size_map | append: dews_rowdelim
+    endif
+    if settings.row_3_enabled
+      assign dews_rows_raw = dews_rows_raw | append: settings.row_3_label | append: dews_delim | append: settings.row_3_key | append: dews_delim | append: settings.row_3_fallback | append: dews_delim | append: settings.row_3_size_map | append: dews_rowdelim
+    endif
+    if settings.row_4_enabled
+      assign dews_rows_raw = dews_rows_raw | append: settings.row_4_label | append: dews_delim | append: settings.row_4_key | append: dews_delim | append: settings.row_4_fallback | append: dews_delim | append: settings.row_4_size_map | append: dews_rowdelim
+    endif
+    if settings.row_5_enabled
+      assign dews_rows_raw = dews_rows_raw | append: settings.row_5_label | append: dews_delim | append: settings.row_5_key | append: dews_delim | append: settings.row_5_fallback | append: dews_delim | append: settings.row_5_size_map | append: dews_rowdelim
+    endif
+    if settings.row_6_enabled
+      assign dews_rows_raw = dews_rows_raw | append: settings.row_6_label | append: dews_delim | append: settings.row_6_key | append: dews_delim | append: settings.row_6_fallback | append: dews_delim | append: settings.row_6_size_map | append: dews_rowdelim
+    endif
+  endif
+
+  assign dews_rows = dews_rows_raw | split: dews_rowdelim
+  assign dews_has_content = false
+
+  # ---- JSON source mode: rows come from a JSON metafield ----
+  # Keys are collected from the UNION of every variant, de-duplicated and in
+  # first-seen order. If we only read the selected variant, a key that exists
+  # on some other size would have no DOM row at all and could never appear.
+  assign dews_json_mf = nil
+  assign dews_jkey = settings.json_key | default: 'dimensions' | strip
+  assign dews_json_keys = dews_rowdelim
+  if dews_source == 'json'
+    assign dews_json_mf = dews_current.metafields[dews_ns][dews_jkey]
+    for dews_jv_variant in product.variants
+      assign dews_jv_mf = dews_jv_variant.metafields[dews_ns][dews_jkey]
+      if dews_jv_mf != blank
+        for dews_prop in dews_jv_mf.value
+          assign dews_pname = dews_prop.first
+          if dews_pname != blank
+            assign dews_needle = dews_rowdelim | append: dews_pname | append: dews_rowdelim
+            unless dews_json_keys contains dews_needle
+              assign dews_json_keys = dews_json_keys | append: dews_pname | append: dews_rowdelim
+              assign dews_has_content = true
+            endunless
+          endif
+        endfor
+      endif
+    endfor
+  endif
+-%}
+
+{%- comment -%}========== pre-pass: does anything have a value at all? =========={%- endcomment -%}
+{%- if dews_source == 'rows' -%}
+  {%- for dews_row in dews_rows -%}
+    {%- if dews_row != blank -%}
+      {%- assign dews_parts = dews_row | split: dews_delim -%}
+      {%- assign dews_rkey = dews_parts[1] | strip -%}
+      {%- assign dews_rfallback = dews_parts[2] | strip -%}
+      {%- assign dews_rmap = dews_parts[3] | default: '' -%}
+      {%- capture dews_pval -%}
+        {%- render 'dews-mf-value', owner: product, namespace: dews_ns, key: dews_rkey -%}
+      {%- endcapture -%}
+      {%- capture dews_cval -%}
+        {%- render 'dews-spec-resolve',
+          variant: dews_current,
+          product_value: dews_pval,
+          namespace: dews_ns,
+          key: dews_rkey,
+          size_map: dews_rmap,
+          fallback: dews_rfallback
+        -%}
+      {%- endcapture -%}
+      {%- comment -%}
+        The resolver always emits "<value>~^~<source>", so a missing value still
+        produces the separator. Test the value half only — otherwise an empty
+        block would look like it had content.
+      {%- endcomment -%}
+      {%- assign dews_cp = dews_cval | split: '~^~' -%}
+      {%- if dews_cp[0] != blank -%}
+        {%- assign dews_has_content = true -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- if dews_has_content -%}
+  <dews-variant-info
+    id="{{ element_id }}"
+    class="dews-spec dews-spec--{{ dews_layout }}{% if dews_layout == 'tiles' %} dews-spec--cols-{{ dews_columns }}{% endif %}"
+    data-dews-spec="{{ dews_source }}"
+    data-variant-id="{{ dews_current.id | default: '' }}"
+    data-section-id="{{ section_id | default: '' }}"
+    {%- if block != blank %} {{ block.shopify_attributes }}{% endif %}
+  >
+    {%- if settings.heading != blank -%}
+      <p class="dews-spec__heading" data-dews-heading>{{ settings.heading | escape }}</p>
+    {%- endif -%}
+
+    {%- if dews_source == 'json' -%}
+      {%- comment -%}================ JSON MODE ================{%- endcomment -%}
+      {%- assign dews_jkeys = dews_json_keys | split: dews_rowdelim -%}
+      {%- if dews_layout == 'tiles' -%}<ul class="dews-spec__list">{%- else -%}<div class="dews-spec__rows">{%- endif -%}
+        {%- for dews_jk in dews_jkeys -%}
+          {%- if dews_jk != blank -%}
+            {%- assign dews_jv = '' -%}
+            {%- if dews_json_mf != blank -%}
+              {%- assign dews_jv = dews_json_mf.value[dews_jk] | default: '' | strip -%}
+            {%- endif -%}
+            {%- if dews_layout == 'tiles' -%}
+              <li class="dews-spec__item" data-dim-key="{{ dews_jk | escape }}"{% if dews_jv == blank %} hidden{% endif %}>
+                <span class="dews-spec__label">{{ dews_jk | escape }}</span>
+                <strong class="dews-spec__val" data-dim-val>{{ dews_jv | escape }}</strong>
+              </li>
+            {%- else -%}
+              <div class="dews-spec__row" data-dim-key="{{ dews_jk | escape }}"{% if dews_jv == blank %} hidden{% endif %}>
+                <span class="dews-spec__label">{{ dews_jk | escape }}</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>{{ dews_jv | escape }}</p>
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- if dews_layout == 'tiles' -%}</ul>{%- else -%}</div>{%- endif -%}
+
+      {%- comment -%}---- per-variant JSON (variant-keyed) ----
+      Explicit counters, not `forloop`, so the comma logic can never be
+      confused by the nested key loop.{%- endcomment -%}
+      {%- assign dews_map = '' -%}
+      {%- assign dews_n_v = 0 -%}
+      {%- for dews_v in product.variants -%}
+      {%- assign dews_n_v = dews_n_v | plus: 1 -%}
+        {%- assign dews_vmf = dews_v.metafields[dews_ns][dews_jkey] -%}
+        {%- assign dews_vfrag = '' -%}
+        {%- assign dews_n_k = 0 -%}
+        {%- for dews_jk in dews_jkeys -%}
+          {%- if dews_jk != blank -%}
+            {%- assign dews_n_k = dews_n_k | plus: 1 -%}
+            {%- if dews_n_k > 1 -%}{%- assign dews_vfrag = dews_vfrag | append: ',' -%}{%- endif -%}
+            {%- assign dews_jvk = dews_jk | json -%}
+            {%- if dews_vmf != blank -%}
+              {%- assign dews_jvv = dews_vmf.value[dews_jk] | default: '' | strip -%}
+            {%- else -%}
+              {%- assign dews_jvv = '' -%}
+            {%- endif -%}
+            {%- if dews_jvv == blank -%}
+              {%- assign dews_jvj = 'null' -%}
+            {%- else -%}
+              {%- assign dews_jvj = dews_jvv | json -%}
+            {%- endif -%}
+            {%- assign dews_vfrag = dews_vfrag | append: dews_jvk | append: ':' | append: dews_jvj -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if dews_n_v > 1 -%}{%- assign dews_map = dews_map | append: ',' -%}{%- endif -%}
+        {%- comment -%} append:'' coerces the numeric id to a string so | json emits a quoted key {%- endcomment -%}
+            {%- assign dews_vid = dews_v.id | append: '' | json -%}
+        {%- assign dews_vblock = '{' | append: dews_vfrag | append: '}' -%}
+        {%- assign dews_map = dews_map | append: dews_vid | append: ':' | append: dews_vblock -%}
+      {%- endfor -%}
+      {%- comment -%} HTML-safe: a value containing "</script>" must not break out of the tag {%- endcomment -%}
+      {%- assign dews_map = dews_map | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' -%}
+      <script type="application/json" data-dews-spec-json>{"byVariant":{ {{ dews_map }} }}</script>
+
+    {%- else -%}
+      {%- comment -%}================ ROWS MODE ================{%- endcomment -%}
+      {%- if dews_layout == 'tiles' -%}<ul class="dews-spec__list">{%- else -%}<div class="dews-spec__rows">{%- endif -%}
+        {%- for dews_row in dews_rows -%}
+          {%- if dews_row != blank -%}
+            {%- liquid
+              assign dews_parts = dews_row | split: dews_delim
+              assign dews_rlabel = dews_parts[0] | strip
+              assign dews_rkey = dews_parts[1] | strip
+              assign dews_rfallback = dews_parts[2] | strip
+              assign dews_rmap = dews_parts[3] | default: ''
+              if dews_rlabel == blank
+                assign dews_rlabel = dews_rkey | replace: '_', ' ' | capitalize
+              endif
+              if dews_rkey == blank
+                assign dews_rkey = 'row-' | append: forloop.index
+              endif
+            -%}
+
+            {%- capture dews_pval -%}
+              {%- render 'dews-mf-value', owner: product, namespace: dews_ns, key: dews_rkey -%}
+            {%- endcapture -%}
+            {%- assign dews_pval = dews_pval | strip -%}
+
+            {%- capture dews_res -%}
+              {%- render 'dews-spec-resolve',
+                variant: dews_current,
+                product_value: dews_pval,
+                namespace: dews_ns,
+                key: dews_rkey,
+                size_map: dews_rmap,
+                fallback: dews_rfallback
+              -%}
+            {%- endcapture -%}
+            {%- assign dews_rp = dews_res | split: '~^~' -%}
+            {%- assign dews_val = dews_rp[0] | strip -%}
+
+            {%- comment -%}---- pick an icon from the label/key wording ----{%- endcomment -%}
+            {%- assign dews_hay = dews_rkey | append: ' ' | append: dews_rlabel | downcase -%}
+            {%- assign dews_icon = 'generic' -%}
+            {%- if dews_hay contains 'seat' -%}
+              {%- assign dews_icon = 'seat' -%}
+            {%- elsif dews_hay contains 'width' or dews_hay contains 'wide' -%}
+              {%- assign dews_icon = 'width' -%}
+            {%- elsif dews_hay contains 'depth' or dews_hay contains 'length' -%}
+              {%- assign dews_icon = 'depth' -%}
+            {%- elsif dews_hay contains 'height' or dews_hay contains 'tall' -%}
+              {%- assign dews_icon = 'height' -%}
+            {%- elsif dews_hay contains 'weight' or dews_hay contains 'kg' -%}
+              {%- assign dews_icon = 'weight' -%}
+            {%- elsif dews_hay contains 'capacity' or dews_hay contains 'seater' or dews_hay contains 'person' -%}
+              {%- assign dews_icon = 'capacity' -%}
+            {%- elsif dews_hay contains 'material' or dews_hay contains 'wood' or dews_hay contains 'fabric' -%}
+              {%- assign dews_icon = 'material' -%}
+            {%- elsif dews_hay contains 'finish' or dews_hay contains 'polish' or dews_hay contains 'colour' or dews_hay contains 'color' -%}
+              {%- assign dews_icon = 'finish' -%}
+            {%- elsif dews_hay contains 'care' or dews_hay contains 'clean' -%}
+              {%- assign dews_icon = 'care' -%}
+            {%- elsif dews_hay contains 'warranty' or dews_hay contains 'assembly' -%}
+              {%- assign dews_icon = 'check' -%}
+            {%- endif -%}
+
+            {%- if dews_layout == 'tiles' -%}
+              <li class="dews-spec__item" data-dim-key="{{ dews_rkey | escape }}"{% if dews_val == blank %} hidden{% endif %}>
+                {%- case dews_icon -%}
+                  {%- when 'width' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg>
+                  {%- when 'depth' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg>
+                  {%- when 'height' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg>
+                  {%- when 'seat' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg>
+                  {%- when 'weight' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7h11l2.5 13H4L6.5 7Z"/><circle cx="12" cy="5" r="2"/></svg>
+                  {%- when 'capacity' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5.5a3 3 0 0 1 0 5.8M18 20a6 6 0 0 0-2-4.5"/></svg>
+                  {%- when 'material' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M12 12 4 7.5M12 12l8-4.5M12 12v9"/></svg>
+                  {%- when 'finish' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16"/></svg>
+                  {%- when 'care' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.4-7-9.6A4.4 4.4 0 0 1 12 8a4.4 4.4 0 0 1 7 3.4C19 16.6 12 21 12 21Z"/></svg>
+                  {%- when 'check' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                  {%- else -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="8" rx="1.5"/><path d="M7 8v3M11 8v3M15 8v3M19 8v3"/></svg>
+                {%- endcase -%}
+                <span class="dews-spec__label">{{ dews_rlabel | escape }}</span>
+                <strong class="dews-spec__val" data-dim-val>{{ dews_val | escape }}</strong>
+              </li>
+            {%- else -%}
+              <div class="dews-spec__row" data-dim-key="{{ dews_rkey | escape }}"{% if dews_val == blank %} hidden{% endif %}>
+                <span class="dews-spec__label">{{ dews_rlabel | escape }}</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>{{ dews_val | escape }}</p>
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- if dews_layout == 'tiles' -%}</ul>{%- else -%}</div>{%- endif -%}
+
+      {%- comment -%}---- per-variant JSON (row-keyed) ----
+      Explicit counters, not `forloop`, so the comma logic can never be
+      confused by the nested variant loop.{%- endcomment -%}
+      {%- assign dews_map = '' -%}
+      {%- assign dews_n_row = 0 -%}
+      {%- for dews_row in dews_rows -%}
+        {%- if dews_row != blank -%}
+        {%- assign dews_n_row = dews_n_row | plus: 1 -%}
+          {%- liquid
+            assign dews_parts = dews_row | split: dews_delim
+            assign dews_rkey = dews_parts[1] | strip
+            assign dews_rfallback = dews_parts[2] | strip
+            assign dews_rmap = dews_parts[3] | default: ''
+            if dews_rkey == blank
+              assign dews_rkey = 'row-' | append: forloop.index
+            endif
+          -%}
+          {%- capture dews_pval -%}
+            {%- render 'dews-mf-value', owner: product, namespace: dews_ns, key: dews_rkey -%}
+          {%- endcapture -%}
+          {%- assign dews_pval = dews_pval | strip -%}
+
+          {%- assign dews_frag = '' -%}
+          {%- assign dews_n_v = 0 -%}
+          {%- for dews_v in product.variants -%}
+            {%- capture dews_res -%}
+              {%- render 'dews-spec-resolve',
+                variant: dews_v,
+                product_value: dews_pval,
+                namespace: dews_ns,
+                key: dews_rkey,
+                size_map: dews_rmap,
+                fallback: dews_rfallback
+              -%}
+            {%- endcapture -%}
+            {%- assign dews_rp = dews_res | split: '~^~' -%}
+            {%- assign dews_val2 = dews_rp[0] | strip -%}
+            {%- assign dews_n_v = dews_n_v | plus: 1 -%}
+            {%- if dews_n_v > 1 -%}{%- assign dews_frag = dews_frag | append: ',' -%}{%- endif -%}
+            {%- if dews_val2 == blank -%}
+              {%- assign dews_vj = 'null' -%}
+            {%- else -%}
+              {%- assign dews_vj = dews_val2 | json -%}
+            {%- endif -%}
+            {%- comment -%} append:'' coerces the numeric id to a string so | json emits a quoted key {%- endcomment -%}
+            {%- assign dews_vid = dews_v.id | append: '' | json -%}
+            {%- assign dews_frag = dews_frag | append: dews_vid | append: ':' | append: dews_vj -%}
+          {%- endfor -%}
+
+          {%- if dews_n_row > 1 -%}{%- assign dews_map = dews_map | append: ',' -%}{%- endif -%}
+          {%- assign dews_kj = dews_rkey | json -%}
+          {%- assign dews_kblock = '{' | append: dews_frag | append: '}' -%}
+          {%- assign dews_map = dews_map | append: dews_kj | append: ':' | append: dews_kblock -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- comment -%} HTML-safe: a value containing "</script>" must not break out of the tag {%- endcomment -%}
+      {%- assign dews_map = dews_map | replace: '<', '\u003c' | replace: '>', '\u003e' | replace: '&', '\u0026' -%}
+      <script type="application/json" data-dews-spec-json>{"byRow":{ {{ dews_map }} }}</script>
+    {%- endif -%}
+
+    {%- if settings.note != blank -%}
+      <p class="dews-spec__note" data-dews-note>{{ settings.note | escape }}</p>
+    {%- endif -%}
+
+    <p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      {{ settings.unavailable_text | default: 'This combination is currently unavailable.' | escape }}
+    </p>
+
+    {%- comment -%}================ EDITOR-ONLY DIAGNOSTIC ================={%- endcomment -%}
+    {%- if request.design_mode and settings.debug and dews_source == 'rows' -%}
+      <div class="dews-spec__debug">
+        <p class="dews-spec__debug-title">
+          Dew's spec debug — namespace <code>{{ dews_ns | escape }}</code>,
+          {{ product.variants.size }} variant(s). Source legend:
+          <b>V</b>=variant metafield · <b>P</b>=product metafield ·
+          <b>S</b>=per-size map · <b>F</b>=static fallback · <b>-</b>=nothing found
+        </p>
+        <table class="dews-spec__debug-table">
+          <thead>
+            <tr><th>Variant</th>{%- for dews_row in dews_rows -%}{%- if dews_row != blank -%}{%- assign dews_dp = dews_row | split: dews_delim -%}<th>{{ dews_dp[0] | default: dews_dp[1] | escape }}</th>{%- endif -%}{%- endfor -%}</tr>
+          </thead>
+          <tbody>
+            {%- for dews_v in product.variants -%}
+              <tr>
+                <th>{{ dews_v.title | escape }}</th>
+                {%- for dews_row in dews_rows -%}
+                  {%- if dews_row != blank -%}
+                    {%- liquid
+                      assign dews_dp = dews_row | split: dews_delim
+                      assign dews_dk = dews_dp[1] | strip
+                      assign dews_df = dews_dp[2] | strip
+                      assign dews_dm = dews_dp[3] | default: ''
+                    -%}
+                    {%- capture dews_dpval -%}
+                      {%- render 'dews-mf-value', owner: product, namespace: dews_ns, key: dews_dk -%}
+                    {%- endcapture -%}
+                    {%- capture dews_dres -%}
+                      {%- render 'dews-spec-resolve',
+                        variant: dews_v,
+                        product_value: dews_dpval,
+                        namespace: dews_ns,
+                        key: dews_dk,
+                        size_map: dews_dm,
+                        fallback: dews_df
+                      -%}
+                    {%- endcapture -%}
+                    {%- assign dews_drp = dews_dres | split: '~^~' -%}
+                    {%- assign dews_dsrc = dews_drp[1] | default: '' | strip -%}
+                    {%- assign dews_dbadge = '-' -%}
+                    {%- case dews_dsrc -%}
+                      {%- when 'variant' -%}{%- assign dews_dbadge = 'V' -%}
+                      {%- when 'product' -%}{%- assign dews_dbadge = 'P' -%}
+                      {%- when 'size' -%}{%- assign dews_dbadge = 'S' -%}
+                      {%- when 'fallback' -%}{%- assign dews_dbadge = 'F' -%}
+                    {%- endcase -%}
+                    <td>
+                      <span class="dews-spec__debug-src" data-src="{{ dews_dbadge | escape }}">{{ dews_dbadge | escape }}</span>
+                      {{ dews_drp[0] | strip | default: '—' | escape }}
+                    </td>
+                  {%- endif -%}
+                {%- endfor -%}
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    {%- endif -%}
+  </dews-variant-info>
+
+{%- elsif request.design_mode -%}
+  {%- comment -%} Nothing resolved — show a helpful placeholder in the editor only {%- endcomment -%}
+  <div class="dews-spec dews-spec--empty"{%- if block != blank %} {{ block.shopify_attributes }}{% endif %}>
+    <p class="dews-spec__heading">{{ settings.heading | default: 'Dimensions' | escape }}</p>
+    <p class="dews-spec__note">
+      {%- if dews_source == 'json' -%}
+        No value found in the JSON metafield <code>{{ dews_ns | escape }}.{{ settings.json_key | default: 'dimensions' | escape }}</code>
+        on variant “{{ dews_current.title | default: product.title | escape }}”.
+      {%- else -%}
+        No values resolved for variant “{{ dews_current.title | default: product.title | escape }}”.
+        Create <b>variant</b> metafields in namespace <code>{{ dews_ns | escape }}</code> with the keys you entered above,
+        or fill the per-size map / static fallback in this block's settings.
+      {%- endif -%}
+    </p>
+  </div>
+{%- endif -%}

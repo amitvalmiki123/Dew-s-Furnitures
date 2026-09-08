@@ -1,0 +1,53 @@
+<section class="craft-story">
+  <div class="craft-story__grid">
+    
+    <div class="craft-story__img">
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy' }}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+    <div class="craft-story__content">
+      {%- if section.settings.heading != blank -%}
+        <h2>{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      
+      {%- if section.settings.text != blank -%}
+        <div class="rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </div>
+    
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Craft Story",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Section Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Dew's Difference"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text/Bullet Points",
+      "default": "<p>Add your story here. Use bullet points for a clean list layout.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Craft Story"
+    }
+  ]
+}
+{% endschema %}

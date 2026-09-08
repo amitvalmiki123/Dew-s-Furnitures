@@ -1,0 +1,74 @@
+<section class="section" id="faq" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <div class="section-head__text">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="faq-title">{{ section.settings.heading }}</h2>
+      </div>
+    </div>
+
+    <div class="faq">
+      {%- for block in section.blocks -%}
+        <div class="faq__item {% if forloop.first %}is-open{% endif %}" {{ block.shopify_attributes }}>
+          <button class="faq__q" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+            <span>{{ block.settings.question }}</span>
+            <span class="faq__icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq__a">
+            <p>{{ block.settings.answer }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Got questions?"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Everything you need to know"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How does white-glove delivery work?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Our delivery partners call you 24 hours in advance to schedule a 2-hour window. They bring the pieces inside, assemble anything requiring tools, and take all packaging materials away with them."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom FAQ",
+      "blocks": [
+        { "type": "question", "settings": { "question": "How does white-glove delivery work?", "answer": "Our delivery partners call you 24 hours in advance to schedule a 2-hour window. They bring the pieces inside, assemble anything requiring tools, and take all packaging materials away with them." } },
+        { "type": "question", "settings": { "question": "How should I clean and maintain the cane webbing?", "answer": "Dust with a soft dry cloth. Twice a year, you can wipe it lightly with a damp cloth and mild soap to keep the natural rattan fibers supple. Avoid soaking." } },
+        { "type": "question", "settings": { "question": "Do you make custom sizes or finishes?", "answer": "Because our batches are small and hand-crafted, we keep our catalog fixed. However, if you are outfitting an entire room, reach out to our studio team for bespoke options." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

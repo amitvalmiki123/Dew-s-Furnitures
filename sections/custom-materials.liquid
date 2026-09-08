@@ -1,0 +1,71 @@
+<section class="section section--tight" aria-labelledby="materials-title">
+  <div class="container">
+    <div class="section-head section-head--center">
+      <div class="section-head__text">
+        <p class="eyebrow"><i class="dew" aria-hidden="true"></i> {{ section.settings.eyebrow }}</p>
+        <h2 id="materials-title">{{ section.settings.heading }}</h2>
+      </div>
+    </div>
+    
+    <div class="materials">
+      {%- for block in section.blocks -%}
+        <div class="material reveal" style="--d:.0{{ forloop.index0 | times: 5 }}s" {{ block.shopify_attributes }}>
+          <span class="material__chip" style="background: {{ block.settings.color_bg }};"></span>
+          <span>{{ block.settings.title }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Materials",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "Materials"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What we build with"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "material",
+      "name": "Material Swatch",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Material Name",
+          "default": "Sheesham Wood"
+        },
+        {
+          "type": "color_background",
+          "id": "color_bg",
+          "label": "Color / Gradient",
+          "default": "linear-gradient(135deg, #8a5a34, #5c3a22)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Materials",
+      "blocks": [
+        { "type": "material", "settings": { "title": "Sheesham Wood", "color_bg": "linear-gradient(135deg, #8a5a34, #5c3a22)" } },
+        { "type": "material", "settings": { "title": "Mango Wood", "color_bg": "linear-gradient(135deg, #e0c096, #c79c6a)" } },
+        { "type": "material", "settings": { "title": "Natural Cane", "color_bg": "linear-gradient(135deg, #e5c99f, #cfa878)" } },
+        { "type": "material", "settings": { "title": "Natural Linen", "color_bg": "linear-gradient(135deg, #efe9dd, #ddd3c3)" } },
+        { "type": "material", "settings": { "title": "Bouclé", "color_bg": "linear-gradient(135deg, #fbf8f3, #e9e3d8)" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

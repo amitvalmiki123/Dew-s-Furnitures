@@ -1,0 +1,447 @@
+/* =====================================================================
+   Dew's Furniture — Custom Product Page (Fixed Layout & 16px Base)
+   ===================================================================== */
+
+.dews-product {
+  --dews-ink:        #1c1a17;
+  --dews-ink-soft:   #3a352f;
+  --dews-muted:      #7a746a;
+  --dews-cream:      #f7f4ee;
+  --dews-line:       #e9e4da;
+  --dews-surface:    #eeeae1;
+  --dews-rust:       #c1502e;
+  --dews-rust-dark:  #a4401f;
+  --dews-radius-pill: 999px;
+  --dews-radius-md:  12px;
+  --dews-radius-sm:  8px;
+}
+
+/* 1. Layout */
+.dews-product-wrapper {background-color: var(--dews-cream);padding-block:2rem;}
+.dews-product .product { gap: 2rem; align-items: start; }
+@media screen and (min-width: 990px) { .dews-product .product { gap: 3.5rem; } }
+.dews-product .product__info-wrapper {background: var(--paper);padding: 1.5rem !important;border-radius: 5px;}
+.dews-product .product__info-container { max-width: stretch; }
+
+/* 2. Gallery */
+.dews-product .product__media,
+.dews-product .product__media-item .product__media,
+.dews-product .product-media-container { border-radius: var(--dews-radius-md); overflow: hidden; background: var(--dews-surface); }
+.dews-product .thumbnail-list__item .thumbnail { border-radius: var(--dews-radius-sm); }
+
+/* 3. Eyebrow */
+.dews-product .product__text { font-size: 0.75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--dews-muted); margin: 0 0 0.5rem; }
+
+/* 4. Title */
+.dews-product .product__title { margin: 0 0 0.5rem; }
+.dews-product .product__title h1 { font-size: 1.75rem; line-height: 1.2; font-weight: 700; color: var(--dews-ink); margin: 0; }
+@media screen and (max-width: 749px) { .dews-product .product__title h1 { font-size: 1.5rem; } }
+
+/* 5. Rating */
+.dews-product .rating-wrapper { margin: 0.25rem 0 1rem; gap: 0.5rem; }
+.dews-product .rating-star { --color-rating-star: var(--dews-rust); }
+.dews-product .rating-text, .dews-product .rating-count { font-size: 0.875rem; color: var(--dews-muted); font-weight: 500; }
+
+/* 6. Price & Badge (Price size reduced further) */
+.dews-product .price .price-item {font-size: 0.9rem;letter-spacing: normal;font-weight: 600;margin-inline-end:5px;margin:0;}
+.dews-product .price__container .price-item--sale { color: var(--dews-rust); }
+.dews-product .price__container .price-item--regular { color: var(--dews-muted); }
+.dews-product .product-form__input--pill input[type=radio]+label {border-radius: 50px;padding: 1.1rem;}
+.dews-product.product .price .badge,.dews-product .product .price__container {margin-bottom: 0;}
+.dews-product .badge { background: var(--dews-rust) !important; color: #fff !important; font-size: 0.75rem !important; padding: 0.3rem 0.6rem !important; border-radius: var(--dews-radius-pill) !important; border: none !important; font-weight: 600 !important; letter-spacing: 0.05em; }
+.dews-product .price {margin-top: 0;display: flex;align-items: center;justify-content: space-between;line-height: normal;align-self: center;gap: 18px;}
+
+/* 7. Dynamic Image Swatches */
+.dews-product variant-selects { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--dews-line); }
+.dews-product .product-form__input .form__label { font-size: 0.875rem; font-weight: 600; color: var(--dews-ink-soft); margin-bottom: 0.8rem; width: fit-content; }
+
+/* Variant Box Styling */
+.dews-product .dews-variant-label {
+  padding: 0 !important;
+  border: 1px solid var(--dews-line) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  cursor: pointer;
+  width: 3.8rem !important;  
+  height: 3.8rem !important; 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dews-surface);
+  margin: 0 0.6rem 0.6rem 0 !important;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Fallback for variants without images (like Size: S, M, L) */
+.dews-product .dews-variant-label:not(.has-image) {
+  width: auto !important;
+  height: auto !important;
+  padding: 0.6rem 1.2rem !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dews-product .dews-variant-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Active / Selected Variant Outline */
+.dews-product input[type="radio"]:checked + .dews-variant-label {
+  border-color: var(--dews-ink) !important;
+  outline: 2px solid var(--dews-ink) !important;
+  outline-offset: 1px !important;
+}
+
+/* 9. Dynamic Animated Inventory Badge */
+.dews-product .dews-custom-inventory { margin-top: 1.5rem; }
+.dews-product .inventory-wrapper { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem; border-radius: var(--dews-radius-pill); background: var(--dews-surface); font-size: 0.875rem; font-weight: 600; }
+.dews-product .inventory-pulse-dot { position: relative; width: 10px; height: 10px; border-radius: 50%; }
+.dews-product .inventory-pulse-dot::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; animation: dewsPulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Colors based on stock status */
+
+/* HIGH STOCK (Green) */
+.dews-product .inventory-wrapper.is-high .inventory-pulse-dot,
+.dews-product .inventory-wrapper.is-high .inventory-pulse-dot::after { background-color: #10b981; }
+.dews-product .inventory-wrapper.is-high .inventory-text { color: #059669; }
+
+/* LOW STOCK (Orange) */
+.dews-product .inventory-wrapper.is-low .inventory-pulse-dot,
+.dews-product .inventory-wrapper.is-low .inventory-pulse-dot::after { background-color: #f59e0b; }
+.dews-product .inventory-wrapper.is-low .inventory-text { color: #b45309; }
+
+/* OUT OF STOCK (Red) */
+.dews-product .inventory-wrapper.is-out .inventory-pulse-dot,
+.dews-product .inventory-wrapper.is-out .inventory-pulse-dot::after { background-color: #ef4444; }
+.dews-product .inventory-wrapper.is-out .inventory-text { color: #b91c1c; }
+
+/* Pulse Animation */
+@keyframes dewsPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* 8. Quantity */
+.dews-product .product-form__quantity { gap: 1rem; margin-top: 1.25rem;display: flex;justify-content: space-between;align-items: center;align-self: center;gap: 10px;line-height: normal; }
+.dews-product .quantity__label { font-size: 0.875rem; font-weight: 600; }
+.dews-product .quantity { height: 2.75rem !important; border-radius: var(--dews-radius-pill); background: var(--dews-cream); border: 1px solid var(--dews-line); }
+.dews-product .quantity__button { width: 2.5rem; }
+.dews-product .quantity__input { width: 2.5rem; font-size: 0.875rem; font-weight: 600; }
+
+/* 9. Buttons - Border & Layout Fixes */
+.dews-product .product-form__buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+.dews-product .product-form__submit,
+.dews-product .shopify-payment-button { flex: 1 1 0; min-width: 12rem; margin: 0; }
+
+.dews-product .product-form__submit,
+.dews-product .shopify-payment-button__button--unbranded {
+  min-height: 3rem !important;
+  border-radius: var(--dews-radius-pill) !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+/* Removing Dawn's weird borders on buttons */
+.dews-product .product-form__submit::before,
+.dews-product .product-form__submit::after,
+.dews-product .shopify-payment-button__button--unbranded::before,
+.dews-product .shopify-payment-button__button--unbranded::after {
+  display: none !important;
+}
+
+.dews-product .product-form__submit { background: var(--dews-ink) !important; color: #fff !important; }
+.dews-product .product-form__submit:hover { background: var(--dews-ink-soft) !important; }
+.dews-product .shopify-payment-button__button--unbranded { background: var(--dews-rust) !important; }
+.dews-product .shopify-payment-button__button--unbranded:hover { background: var(--dews-rust-dark) !important; }
+
+/* 10. Secure Checkout Badges - Clean Layout */
+.dews-product .pay-block { 
+  margin-top: 1.5rem; 
+}
+.dews-product .pay-label { 
+  font-size: 0.75rem; 
+  color: var(--dews-muted); 
+  font-weight: 600; 
+  margin-bottom: 0.75rem; 
+  display: block; 
+}
+.dews-product .pay-row { 
+  display: flex; 
+  gap: 1.2rem; /* Icons ke beech ka space */
+  align-items: center; 
+  flex-wrap: wrap;
+}
+.dews-product .pay-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Border hata di aur icon size bada kar diya */
+.dews-product .pay-icon svg,
+.dews-product .pay-icon img { 
+  width: 3.5rem !important; 
+  height: auto !important; 
+  object-fit: contain;
+}
+
+/* 11. Trust Row - Layout Restored */
+.dews-product .trust-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--dews-line);
+  border-bottom: 1px solid var(--dews-line);
+  padding: 1.2rem 0;
+}
+.dews-product .trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  position: relative;
+}
+.dews-product .trust-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0.2rem;
+  bottom: 0.2rem;
+  width: 1px;
+  background: var(--dews-line);
+}
+.dews-product .trust-item svg, .dews-product .trust-item img { width: 1.5rem; height: 1.5rem; color: var(--dews-rust); object-fit: contain; }
+.dews-product .trust-item span { font-size: 0.7rem; font-weight: 600; color: var(--dews-ink-soft); line-height: 1.2; }
+
+/* 12. Accordion */
+.dews-product .product__accordion { margin-top: 1.5rem; border: none; }
+.dews-product .product__accordion + .product__accordion { margin-top: 0; }
+.dews-product .product__accordion .accordion,
+.dews-product .product__accordion details { border: none; border-bottom: 1px solid var(--dews-line); }
+.dews-product .product__accordion summary { padding: 1rem 0; }
+.dews-product .product__accordion .summary__title { gap: 0.5rem; }
+.dews-product .product__accordion .accordion__title { font-size: 0.875rem !important; font-weight: 600; margin: 0; color: var(--dews-ink-soft); }
+.dews-product .product__accordion .icon-caret { width: 1rem; height: 1rem; color: var(--dews-muted); }
+.dews-product .product__accordion .accordion__content { font-size: 0.875rem; line-height: 1.5; color: var(--dews-muted); padding: 0 0.2rem 1rem; }
+
+/* =====================================================================
+   Make Left Product Media Sticky (Desktop Only)
+===================================================================== */
+@media screen and (min-width: 990px) {
+  .dews-product .product__media-wrapper {
+    position: sticky !important;
+    top: 8rem !important; /* Header ke height ke hisaab se adjust karein */
+    align-self: start !important;
+    z-index: 2;
+  }
+}
+/* =====================================================================
+   PDP buy row: [Add to cart | ♥] side by side, Buy Now full-width below
+   The app's automatic PDP button (icon mode) is moved into the row by
+   dews-wishlist-pdp.js. Wishlist is a compact rust squircle w/ white heart.
+===================================================================== */
+.dews-product .product-form__buttons { flex-wrap: wrap; }
+.dews-product .product-form__submit { min-width: 0; }
+.dews-product .product-form__buttons > .shopify-payment-button { flex: 1 1 100%; min-width: 0; }
+.dews-product .wishlisthero-product-page-button-container.dews-wishlist-inline { flex: 0 0 auto; width: 3.75rem; min-width: 0; margin: 0 !important; padding: 0 !important; }
+.dews-product .dews-wishlist-inline a,
+.dews-product .dews-wishlist-inline button { display: flex !important; align-items: center; justify-content: center; gap: 0.5rem; width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: 3rem !important; min-height: 3rem !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: #c1502e !important; color: #fff !important; font-size: 0.9375rem !important; font-weight: 600 !important; line-height: 1.2; text-decoration: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: none !important; transform: none !important; cursor: pointer; }
+.dews-product .dews-wishlist-inline a:hover,
+.dews-product .dews-wishlist-inline button:hover { background: #a4401f !important; color: #fff !important; }
+.dews-product .dews-wishlist-inline svg { width: 20px !important; height: 20px !important; flex: none; fill: #fff !important; stroke: #fff !important; }
+.dews-product .dews-wishlist-inline svg * { fill: #fff !important; stroke: #fff !important; }
+.dews-product .dews-wishlist-inline a:focus-visible,
+.dews-product .dews-wishlist-inline button:focus-visible { outline: 2px solid #a4401f; outline-offset: 2px; }
+/* Kill Dawn's .button pseudo border/shadow (app clones Dawn button classes) */
+.dews-product .dews-wishlist-inline a::before,
+.dews-product .dews-wishlist-inline a::after,
+.dews-product .dews-wishlist-inline button::before,
+.dews-product .dews-wishlist-inline button::after { display: none !important; content: none !important; }
+/* Exact equal heights: ATC = Wishlist = Buy (incl. branded express buttons) */
+.dews-product .product-form__submit { height: 3rem; }
+.dews-product .shopify-payment-button__button { height: 3rem !important; }
+
+/* =====================================================================
+   Variant-aware spec blocks — "Dimensions" and "Material & Care"
+   Markup : snippets/dews-spec-block.liquid  ->  <dews-variant-info>
+   Sync   : assets/dews-pdp.js
+   Two layouts share one class namespace:
+     .dews-spec--tiles  (icon grid, used by Dimensions)
+     .dews-spec--rows   (label / value list, used by Material & Care)
+===================================================================== */
+.dews-spec {
+  display: block;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--dews-line, #e9e4da);
+}
+.dews-spec__heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__val {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dews-ink, #1c1a17);
+}
+.dews-spec__val--multi {
+  font-weight: 500;
+  line-height: 1.65;
+  white-space: pre-line;          /* keeps multi-line care instructions */
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.72rem;
+  color: var(--dews-muted, #7a746a);
+}
+
+/* ---- tiles layout (Dimensions) ------------------------------------- */
+.dews-spec--cols-2 { --dews-spec-cols: 2; }
+.dews-spec--cols-3 { --dews-spec-cols: 3; }
+.dews-spec--cols-4 { --dews-spec-cols: 4; }
+.dews-spec--tiles .dews-spec__list {
+  display: grid;
+  grid-template-columns: repeat(var(--dews-spec-cols, 4), minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dews-spec--tiles .dews-spec__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.7rem 0.4rem;
+  text-align: center;
+  background: var(--dews-cream, #f7f4ee);
+  border: 1px solid var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+.dews-spec--tiles .dews-spec__item svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--dews-rust, #c1502e);
+}
+
+/* ---- rows layout (Material & Care) --------------------------------- */
+.dews-spec--rows .dews-spec__rows {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+.dews-spec--rows .dews-spec__row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0.8rem;
+  background: var(--dews-cream, #f7f4ee);
+  border: 1px solid var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+
+/* ---- empty rows must stay hidden even against display rules -------- */
+.dews-spec__item[hidden],
+.dews-spec__row[hidden] { display: none !important; }
+
+/* ---- unavailable option combination -------------------------------- */
+.dews-spec__unavailable {
+  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dews-rust-dark, #a4401f);
+}
+.dews-spec__unavailable[hidden] { display: none !important; }
+.dews-spec.is-unavailable .dews-spec__list,
+.dews-spec.is-unavailable .dews-spec__rows { opacity: 0.45; }
+
+/* ---- brief highlight when a value actually changes ----------------- */
+@keyframes dews-spec-flash {
+  from { background-color: var(--dews-surface, #eeeae1); }
+  to   { background-color: var(--dews-cream, #f7f4ee); }
+}
+.dews-spec__item.is-updated,
+.dews-spec__row.is-updated { animation: dews-spec-flash 0.55s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .dews-spec__item.is-updated,
+  .dews-spec__row.is-updated { animation: none; }
+}
+
+/* ---- editor-only empty state --------------------------------------- */
+.dews-spec--empty {
+  padding: 1rem;
+  border: 1px dashed var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+
+/* ---- editor-only debug table --------------------------------------- */
+.dews-spec__debug {
+  margin-top: 0.9rem;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px dashed var(--dews-rust, #c1502e);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+.dews-spec__debug-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__debug-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+.dews-spec__debug-table th,
+.dews-spec__debug-table td {
+  padding: 0.3rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--dews-line, #e9e4da);
+}
+.dews-spec__debug-table thead th {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__debug-src {
+  display: inline-block;
+  min-width: 1.1rem;
+  margin-right: 0.35rem;
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-align: center;
+  background: var(--dews-surface, #eeeae1);
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__debug-src[data-src="V"] { background: #dcf2e2; color: #1c6b34; }  /* variant metafield  */
+.dews-spec__debug-src[data-src="P"] { background: #fff1d6; color: #8a5a00; }  /* product metafield  */
+.dews-spec__debug-src[data-src="S"] { background: #e2e9ff; color: #274690; }  /* per-size map       */
+.dews-spec__debug-src[data-src="F"] { background: #f0e6ff; color: #5b3a99; }  /* static fallback    */
+.dews-spec__debug-src[data-src="-"] { background: #ffe1e1; color: #a01c1c; }  /* nothing found      */
+
+/* ---- mobile -------------------------------------------------------- */
+@media screen and (max-width: 749px) {
+  .dews-spec--tiles .dews-spec__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dews-spec--rows .dews-spec__row { grid-template-columns: 5.5rem minmax(0, 1fr); }
+}

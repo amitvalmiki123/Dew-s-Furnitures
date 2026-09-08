@@ -1,0 +1,79 @@
+{% if section.settings.show_announcement %}
+<div class="announce" style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+  <div class="announce__viewport">
+    <div class="announce__track">
+      {%- for block in section.blocks -%}
+        <span {{ block.shopify_attributes }}>
+          <i class="dew dew--sm" aria-hidden="true" style="background-color: {{ section.settings.icon_color }};"></i> 
+          {{ block.settings.text }}
+        </span>
+      {%- endfor -%}
+      
+      <!-- Duplicate loop for smooth infinite marquee effect -->
+      {%- for block in section.blocks -%}
+        <span aria-hidden="true">
+          <i class="dew dew--sm" style="background-color: {{ section.settings.icon_color }};"></i> 
+          {{ block.settings.text }}
+        </span>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Announcement",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#171310"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#e8e2da"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Diamond Icon Color",
+      "default": "#e01b22"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": "Announcement Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free delivery on orders over $999"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Announcement",
+      "blocks": [
+        { "type": "text_block", "settings": { "text": "Free delivery on orders over $999" } },
+        { "type": "text_block", "settings": { "text": "30-day easy returns" } },
+        { "type": "text_block", "settings": { "text": "1-year structural warranty" } },
+        { "type": "text_block", "settings": { "text": "Handcrafted in small batches" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,56 @@
+<section class="page-banner bg-{{ section.settings.bg_color }}">
+  <h1 class="page-banner__title">{{ section.settings.title | default: page.title }}</h1>
+  
+  {%- if section.settings.text != blank -%}
+    <div class="page-banner__text">{{ section.settings.text }}</div>
+  {%- endif -%}
+  
+  {%- if section.settings.btn_text != blank and section.settings.btn_link != blank -%}
+    <a href="{{ section.settings.btn_link }}" class="page-banner__btn">{{ section.settings.btn_text }}</a>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Custom Page Banner",
+  "settings": [
+    {
+      "type": "select",
+      "id": "bg_color",
+      "label": "Background Color",
+      "options": [
+        { "value": "bone", "label": "Bone (Theme Default)" },
+        { "value": "white", "label": "White" }
+      ],
+      "default": "bone"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Custom Title",
+      "info": "Leave blank to use the page's actual title."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Discover the story, materials, and craftsmanship.</p>"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Page Banner"
+    }
+  ]
+}
+{% endschema %}

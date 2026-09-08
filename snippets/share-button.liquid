@@ -1,0 +1,65 @@
+{% comment %}
+  Renders share button.
+  Accepts:
+  - block: {Object} passes in the block information.
+  - share_link: {String} url to be added to the input the user will get/copy.
+
+  Usage:
+  {% render 'share-button',
+    block: block,
+    share_link: share_url
+  %}
+{% endcomment %}
+<script src="{{ 'share.js' | asset_url }}" defer="defer"></script>
+
+<share-button id="Share-{{ section.id }}" class="share-button quick-add-hidden" {{ block.shopify_attributes }}>
+  <button class="share-button__button hidden">
+    {% if block.settings.raw_svg != blank %}
+            <span class="svg-wrapper" style="width:15px; height:15px;">{{ block.settings.raw_svg }}</span>
+          {% elsif block.settings.icon_image != blank %}
+            <img src="{{ block.settings.icon_image | image_url: width: 40 }}" alt="{{ block.settings.share_label | escape }}" style="width: 15px; height: 15px; object-fit: contain;">
+          {% else %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px; margin-right: 8px;"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+          {% endif %}
+    {{ block.settings.share_label | escape }}
+  </button>
+  <details id="Details-{{ block.id }}-{{ section.id }}">
+    <summary class="share-button__button">
+      {% if block.settings.raw_svg != blank %}
+            <span class="svg-wrapper" style="width:15px; height:15px;">{{ block.settings.raw_svg }}</span>
+          {% elsif block.settings.icon_image != blank %}
+            <img src="{{ block.settings.icon_image | image_url: width: 40 }}" alt="{{ block.settings.share_label | escape }}" style="width: 15px; height: 15px; object-fit: contain;">
+          {% else %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px; margin-right: 8px;"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+          {% endif %}
+      {{ block.settings.share_label | escape }}
+    </summary>
+    <div class="share-button__fallback motion-reduce">
+      <div class="field">
+        <span id="ShareMessage-{{ section.id }}" class="share-button__message hidden" role="status"> </span>
+        <input
+          type="text"
+          class="field__input"
+          id="ShareUrl-{{ section.id }}"
+          value="{{ share_link }}"
+          placeholder="{{ 'general.share.share_url' | t }}"
+          onclick="this.select();"
+          readonly
+        >
+        <label class="field__label" for="ShareUrl-{{ section.id }}">{{ 'general.share.share_url' | t }}</label>
+      </div>
+      <button class="share-button__close hidden">
+        <span class="svg-wrapper">
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </span>
+        <span class="visually-hidden">{{ 'general.share.close' | t }}</span>
+      </button>
+      <button class="share-button__copy">
+        <span class="svg-wrapper">
+          {{- 'icon-copy.svg' | inline_asset_content -}}
+        </span>
+        <span class="visually-hidden">{{ 'general.share.copy_to_clipboard' | t }}</span>
+      </button>
+    </div>
+  </details>
+</share-button>

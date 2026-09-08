@@ -1,0 +1,105 @@
+{%- comment -%}
+  Accepts:
+  - product: {Object} Product Liquid object
+  - index: {Number} Forloop index for staggered animation delays
+  - custom_class: {String} Any extra class (like 'arrivals__feature')
+{%- endcomment -%}
+
+<article class="product reveal {{ custom_class }}" style="--d:.0{{ index | times: 3 }}s">
+  <div class="product__media">
+    
+    {%- comment -%} BADGE LOGIC UPDATE: Checking Sold Out first {%- endcomment -%}
+    {%- if product.available == false -%}
+      <span class="badge badge--sold-out" style="background-color: #1a1a1a; color: #fff;">Sold Out</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      {%- assign saving = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+      <span class="badge badge--sale">Save {{ saving }}%</span>
+    {%- elsif product.tags contains 'New' -%}
+      <span class="badge badge--new">New</span>
+    {%- endif -%}
+
+    <a href="{{ product.url }}">
+      <!-- Added data-main-img so JS can find this exact image -->
+      <img class="img-base" data-main-img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title | escape }}" width="600" height="600" loading="lazy">
+      {%- if product.images[1] != blank -%}
+        <img class="img-hover" src="{{ product.images[1] | image_url: width: 800 }}" alt="" width="600" height="600" loading="lazy" aria-hidden="true">
+      {%- endif -%}
+    </a>
+    
+    <div class="product__tools">
+      <!-- WISHLIST HERO BUTTON (app-powered; needs Wishlist Hero app + app embed enabled) -->
+      {% render 'wishlisthero-collection-product', product: product %}
+      
+      <!-- QUICK VIEW BUTTON -->
+      <button class="tool-btn" data-quickview
+        data-name="{{ product.title | escape }}" 
+        data-price="{{ product.price | money }}" 
+        data-was="{% if product.compare_at_price > product.price %}{{ product.compare_at_price | money }}{% endif %}"
+        data-img="{{ product.featured_image | image_url: width: 800 }}"
+        data-desc="{{ product.description | strip_html | truncate: 150 }}"
+        aria-label="Quick view: {{ product.title | escape }}"><svg aria-hidden="true"><use href="#i-eye"/></svg></button>
+    </div>
+    
+    {%- comment -%} BUTTON LOGIC UPDATE: Quick add vs Sold out {%- endcomment -%}
+    {%- if product.available -%}
+      <form method="post" action="/cart/add">
+        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+        <button type="submit" class="product__add">Quick add</button>
+      </form>
+    {%- else -%}
+      <!-- Wrap in a dummy div/form to match the exact Quick Add layout for hover animation -->
+      <div>
+        <button type="button" class="product__add button--disabled" disabled style="background-color: #1a1a1a; color: #ffffff; cursor: not-allowed;">Sold out</button>
+      </div>
+    {%- endif -%}
+  </div>
+  
+  <div class="product__info">
+    
+    <!-- 1. DYNAMIC JUDGE.ME REVIEWS (Safe Metafield Method) -->
+    <div class="product__rating" style="margin-bottom: 0px; min-height: 20px;">
+      <div class='jdgm-widget jdgm-preview-badge' data-id='{{ product.id }}'>
+        {{ product.metafields.judgeme.badge }}
+      </div>
+    </div>
+    
+    <h3><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    
+    <!-- COLOR SWATCH CODE WITH VARIANT IMAGE LOGIC -->
+    {%- for option in product.options_with_values -%}
+      {%- assign option_name = option.name | downcase -%}
+      {%- if option_name == 'color' or option_name == 'colour' -%}
+        <div class="product__swatches">
+          {%- for value in option.values -%}
+            {%- assign bg_color = value | downcase | replace: ' ', '' -%}
+            
+            {%- comment -%} Find the image attached to this specific color variant {%- endcomment -%}
+            {%- assign variant_img = '' -%}
+            {%- for variant in product.variants -%}
+              {%- if variant.options contains value and variant.image -%}
+                {%- assign variant_img = variant.image | image_url: width: 800 -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            <!-- Yahan forloop.first se pehle color ko 'is-active' class mil jayegi -->
+            <span class="product__swatch {% if forloop.first %}is-active{% endif %}" data-swatch-hover style="background-color: {{ bg_color }};" title="{{ value }}" {% if variant_img != blank %}data-variant-img="{{ variant_img }}"{% endif %}></span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <!-- 2. DYNAMIC PRICE & "SAVE $X" CALCULATION -->
+    <p class="price-row" style="display: flex; align-items: center; gap: 8px;">
+      <span class="price" style="font-weight: 600;">{{ product.price | money }}</span>
+      
+      {%- if product.compare_at_price > product.price -%}
+        <span class="price--was" style="text-decoration: line-through; color: #888; font-size: 0.9em;">{{ product.compare_at_price | money }}</span>
+        
+        <!-- Har product ka real-time save amount calculate hoga -->
+        {%- assign saved_amount = product.compare_at_price | minus: product.price | money -%}
+        <span class="price-save" style="color: #d32f2f; font-weight: 700; font-size: 0.85em;">Save {{ saved_amount }}</span>
+      {%- endif -%}
+    </p>
+  </div>
+</article>

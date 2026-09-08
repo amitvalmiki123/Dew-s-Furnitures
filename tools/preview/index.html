@@ -1,0 +1,1233 @@
+<!doctype html>
+<!--
+  GENERATED FILE — do not edit by hand.
+  Regenerate with:  python3 tools/preview/build.py
+
+  Contains the real rendered output of snippets/dews-spec-block.liquid plus the
+  real assets/dews-pdp.js, assets/constants.js, assets/pubsub.js and
+  assets/component-dews-product.css, all inlined so this one file can be opened
+  straight from a browser or served statically.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dew's Furniture — variant-aware Dimensions block (live demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* ---- Dawn-ish base so component-dews-product.css has what it needs ---- */
+:root { --dews-paper:#fbfaf8; --dews-line:#e2dcd3; }
+*,*::before,*::after { box-sizing:border-box; }
+body { margin:0; background:#f6f3ee; color:#1c1a17;
+       font-family:'Archivo',system-ui,sans-serif; font-size:16px; line-height:1.5;
+       -webkit-font-smoothing:antialiased; }
+.wrap { max-width:1100px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+product-info, variant-selects, product-form, product-component, dews-variant-info { display:block; }
+.page-head h1 { font-family:'Instrument Serif',serif; font-size:2.4rem; font-weight:400; margin:0 0 .35rem; }
+.page-head p { color:#6c6459; margin:0 0 .4rem; max-width:70ch; }
+.page-head code { background:#ece7dd; padding:.1rem .35rem; border-radius:4px; font-size:.85em; }
+.legend { display:flex; flex-wrap:wrap; gap:.5rem; margin:1.1rem 0 2rem; }
+.legend span { font-size:.72rem; font-weight:600; padding:.3rem .6rem; border-radius:999px;
+                background:#fff; border:1px solid var(--dews-line); color:#6c6459; }
+
+.demo-card { background:#fff; border:1px solid var(--dews-line); border-radius:14px;
+              margin-bottom:1.75rem; overflow:hidden; box-shadow:0 1px 2px rgba(28,26,23,.04); }
+.demo-card__head { padding:1.1rem 1.4rem; border-bottom:1px solid var(--dews-line); background:#fbfaf8; }
+.demo-card__head h2 { margin:0 0 .3rem; font-size:1.02rem; font-weight:700; display:flex; align-items:center; gap:.55rem; }
+.demo-card__head p { margin:0; font-size:.82rem; color:#6c6459; max-width:88ch; }
+.demo-card__head code { background:#ece7dd; padding:.05rem .3rem; border-radius:4px; font-size:.9em; }
+.demo-badge { display:inline-grid; place-items:center; width:1.55rem; height:1.55rem; border-radius:7px;
+               background:#c1502e; color:#fff; font-size:.78rem; font-weight:800; }
+.demo-card__body { padding:1.4rem; }
+
+.product__text { font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:#7a746a; margin:0 0 .4rem; }
+.product__title h1 { font-size:1.5rem; font-weight:700; margin:0 0 .5rem; }
+.price { font-size:1.15rem; font-weight:700; margin-bottom:1.1rem; }
+.form__label { font-size:.78rem; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+                color:#3a352f; margin-bottom:.55rem; }
+.pill-row { display:flex; flex-wrap:wrap; gap:.45rem; }
+.pill input { position:absolute; opacity:0; pointer-events:none; }
+.pill span { display:inline-block; padding:.5rem .95rem; border:1px solid var(--dews-line);
+              border-radius:999px; font-size:.82rem; font-weight:600; cursor:pointer;
+              background:#fff; transition:all .16s ease; }
+.pill span:hover { border-color:#c9bfae; }
+.pill input:checked + span { background:#1c1a17; border-color:#1c1a17; color:#fff; }
+.pill input:focus-visible + span { outline:2px solid #c1502e; outline-offset:2px; }
+.pill--unavailable span { color:#a8a096; border-style:dashed; }
+.pill--unavailable input:checked + span { background:#efeae2; border-color:#d8d0c4; color:#8c8378; }
+.demo-buyrow { margin-top:1.25rem; }
+.product-form__submit { height:3rem; padding:0 1.6rem; border:0; border-radius:999px; background:#1c1a17;
+                         color:#fff; font-family:inherit; font-size:.88rem; font-weight:700; cursor:pointer; }
+.product-form__submit:hover { background:#c1502e; }
+
+.log { margin-top:1.6rem; background:#1c1a17; color:#e8e2d8; border-radius:12px; padding:1rem 1.2rem;
+        font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.74rem; line-height:1.7; }
+.log h3 { margin:0 0 .5rem; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:#a89e90; font-family:'Archivo',sans-serif; }
+.log div { white-space:pre-wrap; }
+.log .ok { color:#8fd69f; }
+.log .warn { color:#f0c674; }
+.log .dim { color:#8b8378; }
+</style>
+<style>
+/* =====================================================================
+   Dew's Furniture — Custom Product Page (Fixed Layout & 16px Base)
+   ===================================================================== */
+
+.dews-product {
+  --dews-ink:        #1c1a17;
+  --dews-ink-soft:   #3a352f;
+  --dews-muted:      #7a746a;
+  --dews-cream:      #f7f4ee;
+  --dews-line:       #e9e4da;
+  --dews-surface:    #eeeae1;
+  --dews-rust:       #c1502e;
+  --dews-rust-dark:  #a4401f;
+  --dews-radius-pill: 999px;
+  --dews-radius-md:  12px;
+  --dews-radius-sm:  8px;
+}
+
+/* 1. Layout */
+.dews-product-wrapper {background-color: var(--dews-cream);padding-block:2rem;}
+.dews-product .product { gap: 2rem; align-items: start; }
+@media screen and (min-width: 990px) { .dews-product .product { gap: 3.5rem; } }
+.dews-product .product__info-wrapper {background: var(--paper);padding: 1.5rem !important;border-radius: 5px;}
+.dews-product .product__info-container { max-width: stretch; }
+
+/* 2. Gallery */
+.dews-product .product__media,
+.dews-product .product__media-item .product__media,
+.dews-product .product-media-container { border-radius: var(--dews-radius-md); overflow: hidden; background: var(--dews-surface); }
+.dews-product .thumbnail-list__item .thumbnail { border-radius: var(--dews-radius-sm); }
+
+/* 3. Eyebrow */
+.dews-product .product__text { font-size: 0.75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--dews-muted); margin: 0 0 0.5rem; }
+
+/* 4. Title */
+.dews-product .product__title { margin: 0 0 0.5rem; }
+.dews-product .product__title h1 { font-size: 1.75rem; line-height: 1.2; font-weight: 700; color: var(--dews-ink); margin: 0; }
+@media screen and (max-width: 749px) { .dews-product .product__title h1 { font-size: 1.5rem; } }
+
+/* 5. Rating */
+.dews-product .rating-wrapper { margin: 0.25rem 0 1rem; gap: 0.5rem; }
+.dews-product .rating-star { --color-rating-star: var(--dews-rust); }
+.dews-product .rating-text, .dews-product .rating-count { font-size: 0.875rem; color: var(--dews-muted); font-weight: 500; }
+
+/* 6. Price & Badge (Price size reduced further) */
+.dews-product .price .price-item {font-size: 0.9rem;letter-spacing: normal;font-weight: 600;margin-inline-end:5px;margin:0;}
+.dews-product .price__container .price-item--sale { color: var(--dews-rust); }
+.dews-product .price__container .price-item--regular { color: var(--dews-muted); }
+.dews-product .product-form__input--pill input[type=radio]+label {border-radius: 50px;padding: 1.1rem;}
+.dews-product.product .price .badge,.dews-product .product .price__container {margin-bottom: 0;}
+.dews-product .badge { background: var(--dews-rust) !important; color: #fff !important; font-size: 0.75rem !important; padding: 0.3rem 0.6rem !important; border-radius: var(--dews-radius-pill) !important; border: none !important; font-weight: 600 !important; letter-spacing: 0.05em; }
+.dews-product .price {margin-top: 0;display: flex;align-items: center;justify-content: space-between;line-height: normal;align-self: center;gap: 18px;}
+
+/* 7. Dynamic Image Swatches */
+.dews-product variant-selects { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--dews-line); }
+.dews-product .product-form__input .form__label { font-size: 0.875rem; font-weight: 600; color: var(--dews-ink-soft); margin-bottom: 0.8rem; width: fit-content; }
+
+/* Variant Box Styling */
+.dews-product .dews-variant-label {
+  padding: 0 !important;
+  border: 1px solid var(--dews-line) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  cursor: pointer;
+  width: 3.8rem !important;  
+  height: 3.8rem !important; 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--dews-surface);
+  margin: 0 0.6rem 0.6rem 0 !important;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Fallback for variants without images (like Size: S, M, L) */
+.dews-product .dews-variant-label:not(.has-image) {
+  width: auto !important;
+  height: auto !important;
+  padding: 0.6rem 1.2rem !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dews-product .dews-variant-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Active / Selected Variant Outline */
+.dews-product input[type="radio"]:checked + .dews-variant-label {
+  border-color: var(--dews-ink) !important;
+  outline: 2px solid var(--dews-ink) !important;
+  outline-offset: 1px !important;
+}
+
+/* 9. Dynamic Animated Inventory Badge */
+.dews-product .dews-custom-inventory { margin-top: 1.5rem; }
+.dews-product .inventory-wrapper { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem; border-radius: var(--dews-radius-pill); background: var(--dews-surface); font-size: 0.875rem; font-weight: 600; }
+.dews-product .inventory-pulse-dot { position: relative; width: 10px; height: 10px; border-radius: 50%; }
+.dews-product .inventory-pulse-dot::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; animation: dewsPulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Colors based on stock status */
+
+/* HIGH STOCK (Green) */
+.dews-product .inventory-wrapper.is-high .inventory-pulse-dot,
+.dews-product .inventory-wrapper.is-high .inventory-pulse-dot::after { background-color: #10b981; }
+.dews-product .inventory-wrapper.is-high .inventory-text { color: #059669; }
+
+/* LOW STOCK (Orange) */
+.dews-product .inventory-wrapper.is-low .inventory-pulse-dot,
+.dews-product .inventory-wrapper.is-low .inventory-pulse-dot::after { background-color: #f59e0b; }
+.dews-product .inventory-wrapper.is-low .inventory-text { color: #b45309; }
+
+/* OUT OF STOCK (Red) */
+.dews-product .inventory-wrapper.is-out .inventory-pulse-dot,
+.dews-product .inventory-wrapper.is-out .inventory-pulse-dot::after { background-color: #ef4444; }
+.dews-product .inventory-wrapper.is-out .inventory-text { color: #b91c1c; }
+
+/* Pulse Animation */
+@keyframes dewsPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  70% { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* 8. Quantity */
+.dews-product .product-form__quantity { gap: 1rem; margin-top: 1.25rem;display: flex;justify-content: space-between;align-items: center;align-self: center;gap: 10px;line-height: normal; }
+.dews-product .quantity__label { font-size: 0.875rem; font-weight: 600; }
+.dews-product .quantity { height: 2.75rem !important; border-radius: var(--dews-radius-pill); background: var(--dews-cream); border: 1px solid var(--dews-line); }
+.dews-product .quantity__button { width: 2.5rem; }
+.dews-product .quantity__input { width: 2.5rem; font-size: 0.875rem; font-weight: 600; }
+
+/* 9. Buttons - Border & Layout Fixes */
+.dews-product .product-form__buttons { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+.dews-product .product-form__submit,
+.dews-product .shopify-payment-button { flex: 1 1 0; min-width: 12rem; margin: 0; }
+
+.dews-product .product-form__submit,
+.dews-product .shopify-payment-button__button--unbranded {
+  min-height: 3rem !important;
+  border-radius: var(--dews-radius-pill) !important;
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+/* Removing Dawn's weird borders on buttons */
+.dews-product .product-form__submit::before,
+.dews-product .product-form__submit::after,
+.dews-product .shopify-payment-button__button--unbranded::before,
+.dews-product .shopify-payment-button__button--unbranded::after {
+  display: none !important;
+}
+
+.dews-product .product-form__submit { background: var(--dews-ink) !important; color: #fff !important; }
+.dews-product .product-form__submit:hover { background: var(--dews-ink-soft) !important; }
+.dews-product .shopify-payment-button__button--unbranded { background: var(--dews-rust) !important; }
+.dews-product .shopify-payment-button__button--unbranded:hover { background: var(--dews-rust-dark) !important; }
+
+/* 10. Secure Checkout Badges - Clean Layout */
+.dews-product .pay-block { 
+  margin-top: 1.5rem; 
+}
+.dews-product .pay-label { 
+  font-size: 0.75rem; 
+  color: var(--dews-muted); 
+  font-weight: 600; 
+  margin-bottom: 0.75rem; 
+  display: block; 
+}
+.dews-product .pay-row { 
+  display: flex; 
+  gap: 1.2rem; /* Icons ke beech ka space */
+  align-items: center; 
+  flex-wrap: wrap;
+}
+.dews-product .pay-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Border hata di aur icon size bada kar diya */
+.dews-product .pay-icon svg,
+.dews-product .pay-icon img { 
+  width: 3.5rem !important; 
+  height: auto !important; 
+  object-fit: contain;
+}
+
+/* 11. Trust Row - Layout Restored */
+.dews-product .trust-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--dews-line);
+  border-bottom: 1px solid var(--dews-line);
+  padding: 1.2rem 0;
+}
+.dews-product .trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  position: relative;
+}
+.dews-product .trust-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0.2rem;
+  bottom: 0.2rem;
+  width: 1px;
+  background: var(--dews-line);
+}
+.dews-product .trust-item svg, .dews-product .trust-item img { width: 1.5rem; height: 1.5rem; color: var(--dews-rust); object-fit: contain; }
+.dews-product .trust-item span { font-size: 0.7rem; font-weight: 600; color: var(--dews-ink-soft); line-height: 1.2; }
+
+/* 12. Accordion */
+.dews-product .product__accordion { margin-top: 1.5rem; border: none; }
+.dews-product .product__accordion + .product__accordion { margin-top: 0; }
+.dews-product .product__accordion .accordion,
+.dews-product .product__accordion details { border: none; border-bottom: 1px solid var(--dews-line); }
+.dews-product .product__accordion summary { padding: 1rem 0; }
+.dews-product .product__accordion .summary__title { gap: 0.5rem; }
+.dews-product .product__accordion .accordion__title { font-size: 0.875rem !important; font-weight: 600; margin: 0; color: var(--dews-ink-soft); }
+.dews-product .product__accordion .icon-caret { width: 1rem; height: 1rem; color: var(--dews-muted); }
+.dews-product .product__accordion .accordion__content { font-size: 0.875rem; line-height: 1.5; color: var(--dews-muted); padding: 0 0.2rem 1rem; }
+
+/* =====================================================================
+   Make Left Product Media Sticky (Desktop Only)
+===================================================================== */
+@media screen and (min-width: 990px) {
+  .dews-product .product__media-wrapper {
+    position: sticky !important;
+    top: 8rem !important; /* Header ke height ke hisaab se adjust karein */
+    align-self: start !important;
+    z-index: 2;
+  }
+}
+/* =====================================================================
+   PDP buy row: [Add to cart | ♥] side by side, Buy Now full-width below
+   The app's automatic PDP button (icon mode) is moved into the row by
+   dews-wishlist-pdp.js. Wishlist is a compact rust squircle w/ white heart.
+===================================================================== */
+.dews-product .product-form__buttons { flex-wrap: wrap; }
+.dews-product .product-form__submit { min-width: 0; }
+.dews-product .product-form__buttons > .shopify-payment-button { flex: 1 1 100%; min-width: 0; }
+.dews-product .wishlisthero-product-page-button-container.dews-wishlist-inline { flex: 0 0 auto; width: 3.75rem; min-width: 0; margin: 0 !important; padding: 0 !important; }
+.dews-product .dews-wishlist-inline a,
+.dews-product .dews-wishlist-inline button { display: flex !important; align-items: center; justify-content: center; gap: 0.5rem; width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: 3rem !important; min-height: 3rem !important; margin: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 999px !important; background: #c1502e !important; color: #fff !important; font-size: 0.9375rem !important; font-weight: 600 !important; line-height: 1.2; text-decoration: none !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: none !important; transform: none !important; cursor: pointer; }
+.dews-product .dews-wishlist-inline a:hover,
+.dews-product .dews-wishlist-inline button:hover { background: #a4401f !important; color: #fff !important; }
+.dews-product .dews-wishlist-inline svg { width: 20px !important; height: 20px !important; flex: none; fill: #fff !important; stroke: #fff !important; }
+.dews-product .dews-wishlist-inline svg * { fill: #fff !important; stroke: #fff !important; }
+.dews-product .dews-wishlist-inline a:focus-visible,
+.dews-product .dews-wishlist-inline button:focus-visible { outline: 2px solid #a4401f; outline-offset: 2px; }
+/* Kill Dawn's .button pseudo border/shadow (app clones Dawn button classes) */
+.dews-product .dews-wishlist-inline a::before,
+.dews-product .dews-wishlist-inline a::after,
+.dews-product .dews-wishlist-inline button::before,
+.dews-product .dews-wishlist-inline button::after { display: none !important; content: none !important; }
+/* Exact equal heights: ATC = Wishlist = Buy (incl. branded express buttons) */
+.dews-product .product-form__submit { height: 3rem; }
+.dews-product .shopify-payment-button__button { height: 3rem !important; }
+
+/* =====================================================================
+   Variant-aware spec blocks — "Dimensions" and "Material & Care"
+   Markup : snippets/dews-spec-block.liquid  ->  <dews-variant-info>
+   Sync   : assets/dews-pdp.js
+   Two layouts share one class namespace:
+     .dews-spec--tiles  (icon grid, used by Dimensions)
+     .dews-spec--rows   (label / value list, used by Material & Care)
+===================================================================== */
+.dews-spec {
+  display: block;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--dews-line, #e9e4da);
+}
+.dews-spec__heading {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__val {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dews-ink, #1c1a17);
+}
+.dews-spec__val--multi {
+  font-weight: 500;
+  line-height: 1.65;
+  white-space: pre-line;          /* keeps multi-line care instructions */
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__note {
+  margin: 0.6rem 0 0;
+  font-size: 0.72rem;
+  color: var(--dews-muted, #7a746a);
+}
+
+/* ---- tiles layout (Dimensions) ------------------------------------- */
+.dews-spec--cols-2 { --dews-spec-cols: 2; }
+.dews-spec--cols-3 { --dews-spec-cols: 3; }
+.dews-spec--cols-4 { --dews-spec-cols: 4; }
+.dews-spec--tiles .dews-spec__list {
+  display: grid;
+  grid-template-columns: repeat(var(--dews-spec-cols, 4), minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dews-spec--tiles .dews-spec__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.7rem 0.4rem;
+  text-align: center;
+  background: var(--dews-cream, #f7f4ee);
+  border: 1px solid var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+.dews-spec--tiles .dews-spec__item svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--dews-rust, #c1502e);
+}
+
+/* ---- rows layout (Material & Care) --------------------------------- */
+.dews-spec--rows .dews-spec__rows {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+.dews-spec--rows .dews-spec__row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0.8rem;
+  background: var(--dews-cream, #f7f4ee);
+  border: 1px solid var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+
+/* ---- empty rows must stay hidden even against display rules -------- */
+.dews-spec__item[hidden],
+.dews-spec__row[hidden] { display: none !important; }
+
+/* ---- unavailable option combination -------------------------------- */
+.dews-spec__unavailable {
+  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dews-rust-dark, #a4401f);
+}
+.dews-spec__unavailable[hidden] { display: none !important; }
+.dews-spec.is-unavailable .dews-spec__list,
+.dews-spec.is-unavailable .dews-spec__rows { opacity: 0.45; }
+
+/* ---- brief highlight when a value actually changes ----------------- */
+@keyframes dews-spec-flash {
+  from { background-color: var(--dews-surface, #eeeae1); }
+  to   { background-color: var(--dews-cream, #f7f4ee); }
+}
+.dews-spec__item.is-updated,
+.dews-spec__row.is-updated { animation: dews-spec-flash 0.55s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .dews-spec__item.is-updated,
+  .dews-spec__row.is-updated { animation: none; }
+}
+
+/* ---- editor-only empty state --------------------------------------- */
+.dews-spec--empty {
+  padding: 1rem;
+  border: 1px dashed var(--dews-line, #e9e4da);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+
+/* ---- editor-only debug table --------------------------------------- */
+.dews-spec__debug {
+  margin-top: 0.9rem;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px dashed var(--dews-rust, #c1502e);
+  border-radius: var(--dews-radius-sm, 8px);
+}
+.dews-spec__debug-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__debug-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+.dews-spec__debug-table th,
+.dews-spec__debug-table td {
+  padding: 0.3rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--dews-line, #e9e4da);
+}
+.dews-spec__debug-table thead th {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dews-muted, #7a746a);
+}
+.dews-spec__debug-src {
+  display: inline-block;
+  min-width: 1.1rem;
+  margin-right: 0.35rem;
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-align: center;
+  background: var(--dews-surface, #eeeae1);
+  color: var(--dews-ink-soft, #3a352f);
+}
+.dews-spec__debug-src[data-src="V"] { background: #dcf2e2; color: #1c6b34; }  /* variant metafield  */
+.dews-spec__debug-src[data-src="P"] { background: #fff1d6; color: #8a5a00; }  /* product metafield  */
+.dews-spec__debug-src[data-src="S"] { background: #e2e9ff; color: #274690; }  /* per-size map       */
+.dews-spec__debug-src[data-src="F"] { background: #f0e6ff; color: #5b3a99; }  /* static fallback    */
+.dews-spec__debug-src[data-src="-"] { background: #ffe1e1; color: #a01c1c; }  /* nothing found      */
+
+/* ---- mobile -------------------------------------------------------- */
+@media screen and (max-width: 749px) {
+  .dews-spec--tiles .dews-spec__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dews-spec--rows .dews-spec__row { grid-template-columns: 5.5rem minmax(0, 1fr); }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="page-head">
+    <h1>Variant-aware Dimensions &amp; Material blocks</h1>
+    <p>
+      Yeh page <b>real</b> cheezein use karta hai — markup <code>snippets/dews-spec-block.liquid</code> se render hua hai,
+      behaviour <code>assets/dews-pdp.js</code> se aata hai, aur event bus Dawn ke asli
+      <code>constants.js</code> + <code>pubsub.js</code> hain. Sirf <code>product-info.js</code> mock hai
+      (wohi do kaam karta hai jo Dawn fetch ke baad karta hai).
+    </p>
+    <p><b>Size pills pe click karo</b> — dimensions turant badalne chahiye. Neeche event log bhi hai.</p>
+    <div class="legend">
+      <span>Click a size pill</span><span>Values swap with no page reload</span>
+      <span>Rows with no value hide themselves</span><span>Try the dashed “unavailable” pill too</span>
+    </div>
+  </div>
+
+  
+    <section class="demo-card" data-demo="A">
+      <header class="demo-card__head">
+        <h2><span class="demo-badge">A</span> Variant metafields ✅</h2>
+        <p>The correct setup. Every size has its own <code>custom.width</code>, <code>custom.depth</code>… on the <b>variant</b>.</p>
+      </header>
+
+      <div class="dews-product demo-card__body">
+        <div class="demo-info">
+          <product-info id="MainProduct-secA" class="section-secA-padding dews-product"
+                        data-section="secA" data-product-id="900001"
+                        data-update-url="true" data-url="/products/amara-cane-sofa">
+            <p class="product__text">DEW'S FURNITURE</p>
+            <div class="product__title"><h1>Amara Cane Sofa</h1></div>
+
+            <div class="price" id="price-secA">
+              <span class="price__regular">₹<span data-price-amount>24,999</span></span>
+            </div>
+
+            <variant-selects id="variant-selects-secA" data-section="secA" data-product-id="900001" data-product-handle="amara-cane-sofa" data-product-title="Amara Cane Sofa" data-currency-code="INR">
+<fieldset class="js product-form__input product-form__input--pill">
+<legend class="form__label">Size <span style="font-weight:400;color:var(--dews-muted)">- <span data-selected-value>1 Seater</span></span></legend>
+<div class="pill-row">
+<label class="pill"><input type="radio" name="options[Size]-secA" value="1 Seater" data-variant-id="4001" data-price="24999" checked><span>1 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secA" value="2 Seater" data-variant-id="4002" data-price="38999"><span>2 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secA" value="3 Seater" data-variant-id="4003" data-price="52999"><span>3 Seater</span></label>
+<label class="pill pill--unavailable"><input type="radio" name="options[Size]-secA" value="__none__" data-variant-id="" data-price=""><span>3 Seater · Bouclé (unavailable)</span></label>
+</div></fieldset></variant-selects>
+
+            <dews-variant-info
+    id="DewsDimensions-secA"
+    class="dews-spec dews-spec--tiles dews-spec--cols-4"
+    data-dews-spec="rows"
+    data-variant-id="4001"
+    data-section-id="secA" id="shopify-block-dimensions_a" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Dimensions</p><ul class="dews-spec__list"><li class="dews-spec__item" data-dim-key="width"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span class="dews-spec__label">Width</span>
+                <strong class="dews-spec__val" data-dim-val>38 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="depth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg><span class="dews-spec__label">Depth</span>
+                <strong class="dews-spec__val" data-dim-val>34 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg><span class="dews-spec__label">Height</span>
+                <strong class="dews-spec__val" data-dim-val>31 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="seat_height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg><span class="dews-spec__label">Seat height</span>
+                <strong class="dews-spec__val" data-dim-val>18 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="weight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7h11l2.5 13H4L6.5 7Z"/><circle cx="12" cy="5" r="2"/></svg><span class="dews-spec__label">Weight</span>
+                <strong class="dews-spec__val" data-dim-val>42 lb</strong>
+              </li></ul><script type="application/json" data-dews-spec-json>{"byRow":{ "width":{"4001":"38 in","4002":"58 in","4003":"78 in"},"depth":{"4001":"34 in","4002":"34 in","4003":"34 in"},"height":{"4001":"31 in","4002":"31 in","4003":"31 in"},"seat_height":{"4001":"18 in","4002":"18 in","4003":"18 in"},"weight":{"4001":"42 lb","4002":"68 lb","4003":"94 lb"} }}</script><p class="dews-spec__note" data-dews-note>All dimensions in inches · measured by hand, ±½ in</p><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+<dews-variant-info
+    id="DewsMaterials-secA"
+    class="dews-spec dews-spec--rows"
+    data-dews-spec="rows"
+    data-variant-id="4001"
+    data-section-id="secA" id="shopify-block-dimensions_a" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Material &amp; Care</p><div class="dews-spec__rows"><div class="dews-spec__row" data-dim-key="material">
+                <span class="dews-spec__label">Material</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Sheesham wood + hand-woven cane</p>
+              </div><div class="dews-spec__row" data-dim-key="finish">
+                <span class="dews-spec__label">Finish</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Natural lacquer</p>
+              </div><div class="dews-spec__row" data-dim-key="care">
+                <span class="dews-spec__label">Care</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Wipe with a dry, soft cloth.
+Keep out of direct sunlight.
+Re-oil once a year.</p>
+              </div></div><script type="application/json" data-dews-spec-json>{"byRow":{ "material":{"4001":"Sheesham wood + hand-woven cane","4002":"Sheesham wood + hand-woven cane","4003":"Sheesham wood + hand-woven cane"},"finish":{"4001":"Natural lacquer","4002":"Natural lacquer","4003":"Natural lacquer"},"care":{"4001":"Wipe with a dry, soft cloth.\nKeep out of direct sunlight.\nRe-oil once a year.","4002":"Wipe with a dry, soft cloth.\nKeep out of direct sunlight.\nRe-oil once a year.","4003":"Wipe with a dry, soft cloth.\nKeep out of direct sunlight.\nRe-oil once a year."} }}</script><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+
+            <product-form>
+              <form id="product-form-secA">
+                <input type="hidden" name="id" value="4001">
+                <div class="demo-buyrow">
+                  <button type="submit" class="product-form__submit" name="add">Add to cart</button>
+                </div>
+              </form>
+            </product-form>
+          </product-info>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-card" data-demo="B">
+      <header class="demo-card__head">
+        <h2><span class="demo-badge">B</span> Product metafield only ⚠️</h2>
+        <p>The old bug at data level. Definitions sit on the <b>product</b>, so every size inherits one value and nothing can differ.</p>
+      </header>
+
+      <div class="dews-product demo-card__body">
+        <div class="demo-info">
+          <product-info id="MainProduct-secB" class="section-secB-padding dews-product"
+                        data-section="secB" data-product-id="900001"
+                        data-update-url="true" data-url="/products/amara-cane-sofa">
+            <p class="product__text">DEW'S FURNITURE</p>
+            <div class="product__title"><h1>Amara Cane Sofa</h1></div>
+
+            <div class="price" id="price-secB">
+              <span class="price__regular">₹<span data-price-amount>24,999</span></span>
+            </div>
+
+            <variant-selects id="variant-selects-secB" data-section="secB" data-product-id="900001" data-product-handle="amara-cane-sofa" data-product-title="Amara Cane Sofa" data-currency-code="INR">
+<fieldset class="js product-form__input product-form__input--pill">
+<legend class="form__label">Size <span style="font-weight:400;color:var(--dews-muted)">- <span data-selected-value>1 Seater</span></span></legend>
+<div class="pill-row">
+<label class="pill"><input type="radio" name="options[Size]-secB" value="1 Seater" data-variant-id="5001" data-price="24999" checked><span>1 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secB" value="2 Seater" data-variant-id="5002" data-price="38999"><span>2 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secB" value="3 Seater" data-variant-id="5003" data-price="52999"><span>3 Seater</span></label>
+<label class="pill pill--unavailable"><input type="radio" name="options[Size]-secB" value="__none__" data-variant-id="" data-price=""><span>3 Seater · Bouclé (unavailable)</span></label>
+</div></fieldset></variant-selects>
+
+            <dews-variant-info
+    id="DewsDimensions-secB"
+    class="dews-spec dews-spec--tiles dews-spec--cols-4"
+    data-dews-spec="rows"
+    data-variant-id="5001"
+    data-section-id="secB" id="shopify-block-dimensions_b" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Dimensions</p><ul class="dews-spec__list"><li class="dews-spec__item" data-dim-key="width"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span class="dews-spec__label">Width</span>
+                <strong class="dews-spec__val" data-dim-val>58 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="depth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg><span class="dews-spec__label">Depth</span>
+                <strong class="dews-spec__val" data-dim-val>34 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg><span class="dews-spec__label">Height</span>
+                <strong class="dews-spec__val" data-dim-val>31 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="seat_height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg><span class="dews-spec__label">Seat height</span>
+                <strong class="dews-spec__val" data-dim-val>18 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="weight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7h11l2.5 13H4L6.5 7Z"/><circle cx="12" cy="5" r="2"/></svg><span class="dews-spec__label">Weight</span>
+                <strong class="dews-spec__val" data-dim-val>68 lb</strong>
+              </li></ul><script type="application/json" data-dews-spec-json>{"byRow":{ "width":{"5001":"58 in","5002":"58 in","5003":"58 in"},"depth":{"5001":"34 in","5002":"34 in","5003":"34 in"},"height":{"5001":"31 in","5002":"31 in","5003":"31 in"},"seat_height":{"5001":"18 in","5002":"18 in","5003":"18 in"},"weight":{"5001":"68 lb","5002":"68 lb","5003":"68 lb"} }}</script><p class="dews-spec__note" data-dews-note>All dimensions in inches · measured by hand, ±½ in</p><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+<dews-variant-info
+    id="DewsMaterials-secB"
+    class="dews-spec dews-spec--rows"
+    data-dews-spec="rows"
+    data-variant-id="5001"
+    data-section-id="secB" id="shopify-block-dimensions_b" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Material &amp; Care</p><div class="dews-spec__rows"><div class="dews-spec__row" data-dim-key="material">
+                <span class="dews-spec__label">Material</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Sheesham wood + hand-woven cane</p>
+              </div><div class="dews-spec__row" data-dim-key="finish">
+                <span class="dews-spec__label">Finish</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Natural lacquer</p>
+              </div><div class="dews-spec__row" data-dim-key="care">
+                <span class="dews-spec__label">Care</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Wipe with a dry, soft cloth.
+Keep out of direct sunlight.</p>
+              </div></div><script type="application/json" data-dews-spec-json>{"byRow":{ "material":{"5001":"Sheesham wood + hand-woven cane","5002":"Sheesham wood + hand-woven cane","5003":"Sheesham wood + hand-woven cane"},"finish":{"5001":"Natural lacquer","5002":"Natural lacquer","5003":"Natural lacquer"},"care":{"5001":"Wipe with a dry, soft cloth.\nKeep out of direct sunlight.","5002":"Wipe with a dry, soft cloth.\nKeep out of direct sunlight.","5003":"Wipe with a dry, soft cloth.\nKeep out of direct sunlight."} }}</script><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+
+            <product-form>
+              <form id="product-form-secB">
+                <input type="hidden" name="id" value="5001">
+                <div class="demo-buyrow">
+                  <button type="submit" class="product-form__submit" name="add">Add to cart</button>
+                </div>
+              </form>
+            </product-form>
+          </product-info>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-card" data-demo="C">
+      <header class="demo-card__head">
+        <h2><span class="demo-badge">C</span> Per-size fallback map ✅</h2>
+        <p>No metafields at all. Values come from the block's <i>Per-option fallback map</i> setting — still size-specific.</p>
+      </header>
+
+      <div class="dews-product demo-card__body">
+        <div class="demo-info">
+          <product-info id="MainProduct-secC" class="section-secC-padding dews-product"
+                        data-section="secC" data-product-id="900001"
+                        data-update-url="true" data-url="/products/amara-cane-sofa">
+            <p class="product__text">DEW'S FURNITURE</p>
+            <div class="product__title"><h1>Amara Cane Sofa</h1></div>
+
+            <div class="price" id="price-secC">
+              <span class="price__regular">₹<span data-price-amount>24,999</span></span>
+            </div>
+
+            <variant-selects id="variant-selects-secC" data-section="secC" data-product-id="900001" data-product-handle="amara-cane-sofa" data-product-title="Amara Cane Sofa" data-currency-code="INR">
+<fieldset class="js product-form__input product-form__input--pill">
+<legend class="form__label">Size <span style="font-weight:400;color:var(--dews-muted)">- <span data-selected-value>1 Seater</span></span></legend>
+<div class="pill-row">
+<label class="pill"><input type="radio" name="options[Size]-secC" value="1 Seater" data-variant-id="6001" data-price="24999" checked><span>1 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secC" value="2 Seater" data-variant-id="6002" data-price="38999"><span>2 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secC" value="3 Seater" data-variant-id="6003" data-price="52999"><span>3 Seater</span></label>
+<label class="pill pill--unavailable"><input type="radio" name="options[Size]-secC" value="__none__" data-variant-id="" data-price=""><span>3 Seater · Bouclé (unavailable)</span></label>
+</div></fieldset></variant-selects>
+
+            <dews-variant-info
+    id="DewsDimensions-secC"
+    class="dews-spec dews-spec--tiles dews-spec--cols-4"
+    data-dews-spec="rows"
+    data-variant-id="6001"
+    data-section-id="secC" id="shopify-block-dimensions_c" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Dimensions</p><ul class="dews-spec__list"><li class="dews-spec__item" data-dim-key="width"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span class="dews-spec__label">Width</span>
+                <strong class="dews-spec__val" data-dim-val>38 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="depth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg><span class="dews-spec__label">Depth</span>
+                <strong class="dews-spec__val" data-dim-val>34 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg><span class="dews-spec__label">Height</span>
+                <strong class="dews-spec__val" data-dim-val>31 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="seat_height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg><span class="dews-spec__label">Seat height</span>
+                <strong class="dews-spec__val" data-dim-val>18 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="weight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7h11l2.5 13H4L6.5 7Z"/><circle cx="12" cy="5" r="2"/></svg><span class="dews-spec__label">Weight</span>
+                <strong class="dews-spec__val" data-dim-val>42 lb</strong>
+              </li></ul><script type="application/json" data-dews-spec-json>{"byRow":{ "width":{"6001":"38 in","6002":"58 in","6003":"78 in"},"depth":{"6001":"34 in","6002":"34 in","6003":"34 in"},"height":{"6001":"31 in","6002":"31 in","6003":"31 in"},"seat_height":{"6001":"18 in","6002":"18 in","6003":"18 in"},"weight":{"6001":"42 lb","6002":"68 lb","6003":"94 lb"} }}</script><p class="dews-spec__note" data-dews-note>Driven purely by the per-size map in the block settings</p><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+
+
+            <product-form>
+              <form id="product-form-secC">
+                <input type="hidden" name="id" value="6001">
+                <div class="demo-buyrow">
+                  <button type="submit" class="product-form__submit" name="add">Add to cart</button>
+                </div>
+              </form>
+            </product-form>
+          </product-info>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-card" data-demo="D">
+      <header class="demo-card__head">
+        <h2><span class="demo-badge">D</span> Some metafields missing</h2>
+        <p>2 Seater has no <code>seat_height</code> / <code>weight</code>. Those tiles hide themselves for that size only.</p>
+      </header>
+
+      <div class="dews-product demo-card__body">
+        <div class="demo-info">
+          <product-info id="MainProduct-secD" class="section-secD-padding dews-product"
+                        data-section="secD" data-product-id="900001"
+                        data-update-url="true" data-url="/products/amara-cane-sofa">
+            <p class="product__text">DEW'S FURNITURE</p>
+            <div class="product__title"><h1>Amara Cane Sofa</h1></div>
+
+            <div class="price" id="price-secD">
+              <span class="price__regular">₹<span data-price-amount>24,999</span></span>
+            </div>
+
+            <variant-selects id="variant-selects-secD" data-section="secD" data-product-id="900001" data-product-handle="amara-cane-sofa" data-product-title="Amara Cane Sofa" data-currency-code="INR">
+<fieldset class="js product-form__input product-form__input--pill">
+<legend class="form__label">Size <span style="font-weight:400;color:var(--dews-muted)">- <span data-selected-value>1 Seater</span></span></legend>
+<div class="pill-row">
+<label class="pill"><input type="radio" name="options[Size]-secD" value="1 Seater" data-variant-id="7001" data-price="24999" checked><span>1 Seater</span></label>
+<label class="pill"><input type="radio" name="options[Size]-secD" value="2 Seater" data-variant-id="7002" data-price="38999"><span>2 Seater</span></label>
+<label class="pill pill--unavailable"><input type="radio" name="options[Size]-secD" value="__none__" data-variant-id="" data-price=""><span>3 Seater · Bouclé (unavailable)</span></label>
+</div></fieldset></variant-selects>
+
+            <dews-variant-info
+    id="DewsDimensions-secD"
+    class="dews-spec dews-spec--tiles dews-spec--cols-4"
+    data-dews-spec="rows"
+    data-variant-id="7001"
+    data-section-id="secD" id="shopify-block-dimensions_d" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Dimensions</p><ul class="dews-spec__list"><li class="dews-spec__item" data-dim-key="width"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span class="dews-spec__label">Width</span>
+                <strong class="dews-spec__val" data-dim-val>38 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="depth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19 19 5M19 5h-5M19 5v5M5 19h5M5 19v-5"/></svg><span class="dews-spec__label">Depth</span>
+                <strong class="dews-spec__val" data-dim-val>34 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M12 3 9 6M12 3l3 3M12 21l-3-3M12 21l3-3"/></svg><span class="dews-spec__label">Height</span>
+                <strong class="dews-spec__val" data-dim-val>31 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="seat_height"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3M4 11h16v4H4zM6 15v4M18 15v4"/></svg><span class="dews-spec__label">Seat height</span>
+                <strong class="dews-spec__val" data-dim-val>18 in</strong>
+              </li><li class="dews-spec__item" data-dim-key="weight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7h11l2.5 13H4L6.5 7Z"/><circle cx="12" cy="5" r="2"/></svg><span class="dews-spec__label">Weight</span>
+                <strong class="dews-spec__val" data-dim-val>42 lb</strong>
+              </li></ul><script type="application/json" data-dews-spec-json>{"byRow":{ "width":{"7001":"38 in","7002":"58 in"},"depth":{"7001":"34 in","7002":"34 in"},"height":{"7001":"31 in","7002":"31 in"},"seat_height":{"7001":"18 in","7002":null},"weight":{"7001":"42 lb","7002":null} }}</script><p class="dews-spec__note" data-dews-note>All dimensions in inches · measured by hand, ±½ in</p><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+<dews-variant-info
+    id="DewsMaterials-secD"
+    class="dews-spec dews-spec--rows"
+    data-dews-spec="rows"
+    data-variant-id="7001"
+    data-section-id="secD" id="shopify-block-dimensions_d" class="shopify-block"
+  ><p class="dews-spec__heading" data-dews-heading>Material &amp; Care</p><div class="dews-spec__rows"><div class="dews-spec__row" data-dim-key="material">
+                <span class="dews-spec__label">Material</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Sheesham wood</p>
+              </div><div class="dews-spec__row" data-dim-key="finish">
+                <span class="dews-spec__label">Finish</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val>Natural lacquer</p>
+              </div><div class="dews-spec__row" data-dim-key="care" hidden>
+                <span class="dews-spec__label">Care</span>
+                <p class="dews-spec__val dews-spec__val--multi" data-dim-val></p>
+              </div></div><script type="application/json" data-dews-spec-json>{"byRow":{ "material":{"7001":"Sheesham wood","7002":"Sheesham wood"},"finish":{"7001":"Natural lacquer","7002":"Walnut stain"},"care":{"7001":null,"7002":null} }}</script><p class="dews-spec__unavailable" data-dews-unavailable hidden>
+      This size / colour combination is currently unavailable.
+    </p></dews-variant-info>
+
+            <product-form>
+              <form id="product-form-secD">
+                <input type="hidden" name="id" value="7001">
+                <div class="demo-buyrow">
+                  <button type="submit" class="product-form__submit" name="add">Add to cart</button>
+                </div>
+              </form>
+            </product-form>
+          </product-info>
+        </div>
+      </div>
+    </section>
+
+  <div class="log" id="log"><h3>Event log</h3><div id="log-body"></div></div>
+</div>
+
+<script>const ON_CHANGE_DEBOUNCE_TIMER = 300;
+
+const PUB_SUB_EVENTS = {
+  cartUpdate: 'cart-update',
+  quantityUpdate: 'quantity-update',
+  optionValueSelectionChange: 'option-value-selection-change',
+  variantChange: 'variant-change',
+  cartError: 'cart-error',
+};
+</script>
+<script>let subscribers = {};
+
+function subscribe(eventName, callback) {
+  if (subscribers[eventName] === undefined) {
+    subscribers[eventName] = [];
+  }
+
+  subscribers[eventName] = [...subscribers[eventName], callback];
+
+  return function unsubscribe() {
+    subscribers[eventName] = subscribers[eventName].filter((cb) => {
+      return cb !== callback;
+    });
+  };
+}
+
+function publish(eventName, data) {
+  if (subscribers[eventName]) {
+    const promises = subscribers[eventName]
+      .map((callback) => callback(data))
+    return Promise.all(promises);
+  } else {
+    return Promise.resolve()
+  }
+}
+</script>
+<script>/* ==========================================================================
+   Dew's Furniture — PDP variant-aware spec blocks
+   ==========================================================================
+   Powers the <dews-variant-info> element used by the "Dimensions" and
+   "Material & Care" blocks in sections/main-product.liquid.
+
+   Values are rendered server-side for the selected variant, and every other
+   variant's values ship as JSON inside the element. This script swaps the
+   visible values when the shopper picks a different size/colour.
+
+   Three independent triggers, all of them fire AFTER Dawn has resolved the
+   variant (so there is no race and no stale value):
+
+     1. Dawn's pubsub `variantChange`  — carries the freshly rendered section
+                                         HTML, so we can copy Liquid's own output.
+     2. `change` on the product form's input[name="id"] — Dawn sets this value
+                                         after its fetch; it is also the only
+                                         signal for UNAVAILABLE combinations
+                                         (Dawn skips the pubsub event then).
+     3. Re-connect — when Dawn swaps the whole <product-info> (combined
+                                         listing / product switch) a brand new
+                                         element is created and syncs itself.
+
+   Safe no-op when the element or its data are not on the page.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  if (window.customElements && window.customElements.get('dews-variant-info')) return;
+
+  /* `PUB_SUB_EVENTS` is declared with `const` in constants.js, so it lives in
+     the global lexical scope and is NOT a property of window. Reference it as
+     a bare identifier behind a typeof guard. */
+  var PUBSUB_OK = false;
+  try {
+    PUBSUB_OK = typeof subscribe === 'function' && typeof PUB_SUB_EVENTS !== 'undefined' && !!PUB_SUB_EVENTS.variantChange;
+  } catch (err) {
+    PUBSUB_OK = false;
+  }
+
+  function hasOwn(obj, key) {
+    return !!obj && Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function parseJsonScript(el) {
+    if (!el) return null;
+    try {
+      var data = JSON.parse(el.textContent || '');
+      return data && typeof data === 'object' ? data : null;
+    } catch (err) {
+      if (window.console && console.warn) {
+        console.warn("[Dew's] spec block: embedded JSON could not be parsed.", err);
+      }
+      return null;
+    }
+  }
+
+  /* Supports both shapes the Liquid emits:
+       { byRow:     { <rowKey>:    { <variantId>: value|null } } }
+       { byVariant: { <variantId>: { <rowKey>:    value|null } } }        */
+  function lookup(map, rowKey, variantId) {
+    if (!map || !variantId) return undefined;
+    var vid = String(variantId);
+
+    if (hasOwn(map, 'byRow') && hasOwn(map.byRow, rowKey) && hasOwn(map.byRow[rowKey], vid)) {
+      return map.byRow[rowKey][vid];
+    }
+    if (hasOwn(map, 'byVariant') && hasOwn(map.byVariant, vid) && hasOwn(map.byVariant[vid], rowKey)) {
+      return map.byVariant[vid][rowKey];
+    }
+    return undefined;
+  }
+
+  function knowsVariant(map, variantId) {
+    if (!map || !variantId) return false;
+    var vid = String(variantId);
+    if (hasOwn(map, 'byVariant')) return hasOwn(map.byVariant, vid);
+    if (hasOwn(map, 'byRow')) {
+      return Object.keys(map.byRow).some(function (rowKey) {
+        return hasOwn(map.byRow[rowKey], vid);
+      });
+    }
+    return false;
+  }
+
+  function escapeForSelector(value) {
+    return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  /* Brief highlight so it is obvious which values actually moved.
+     Only called when a value really changed. */
+  function flash(row) {
+    if (!row.classList) return;
+    row.classList.remove('is-updated');
+    void row.offsetWidth; // restart the CSS animation
+    row.classList.add('is-updated');
+    window.setTimeout(function () {
+      row.classList.remove('is-updated');
+    }, 650);
+  }
+
+  class DewsVariantInfo extends HTMLElement {
+    connectedCallback() {
+      if (this.__dewsWired) {
+        this.syncFromInput();
+        return;
+      }
+      this.__dewsWired = true;
+
+      this.__map = parseJsonScript(this.querySelector('[data-dews-spec-json]'));
+      this.__rows = Array.prototype.slice.call(this.querySelectorAll('[data-dim-key]'));
+      this.__unavailableEl = this.querySelector('[data-dews-unavailable]');
+
+      var self = this;
+
+      /* --- trigger 1: Dawn pubsub ------------------------------------- */
+      if (PUBSUB_OK) {
+        try {
+          this.__unsubscribe = subscribe(PUB_SUB_EVENTS.variantChange, function (payload) {
+            self.onVariantChange(payload);
+          });
+        } catch (err) {
+          this.__unsubscribe = null;
+        }
+      }
+
+      /* --- trigger 2: product form variant input ----------------------- */
+      var scope = this.closest('product-info') || this.closest('product-component') || document;
+      this.__input = scope.querySelector('input[name="id"]');
+      if (this.__input) {
+        this.__onInput = function () {
+          self.syncFromInput();
+        };
+        this.__input.addEventListener('change', this.__onInput);
+      }
+
+      /* --- trigger 3: element (re)connected after a DOM swap ----------- */
+      this.syncFromInput();
+    }
+
+    disconnectedCallback() {
+      if (typeof this.__unsubscribe === 'function') {
+        try {
+          this.__unsubscribe();
+        } catch (err) {
+          /* already gone */
+        }
+      }
+      this.__unsubscribe = null;
+
+      if (this.__input && this.__onInput) {
+        this.__input.removeEventListener('change', this.__onInput);
+      }
+      this.__input = null;
+      this.__onInput = null;
+      this.__rows = [];
+      this.__map = null;
+      this.__dewsWired = false;
+    }
+
+    /* Dawn publishes { data: { sectionId, html, variant } } */
+    onVariantChange(payload) {
+      var data = (payload && payload.data) || {};
+      var variant = data.variant;
+
+      if (!variant || !variant.id) {
+        /* Unavailable combination. Only act when the event is clearly ours —
+           the input listener covers this case for every other situation. */
+        var sid = this.dataset.sectionId;
+        if (sid && data.sectionId && sid === data.sectionId) this.setUnavailable(true);
+        return;
+      }
+
+      var vid = String(variant.id);
+
+      /* Ignore events from another product-info on the same page
+         (e.g. a featured-product section). */
+      if (!knowsVariant(this.__map, vid)) return;
+
+      var fresh = null;
+      if (data.html && this.id) {
+        try {
+          fresh = data.html.getElementById(this.id);
+        } catch (err) {
+          fresh = null;
+        }
+      }
+
+      this.setUnavailable(false);
+      this.render(vid, fresh);
+    }
+
+    syncFromInput() {
+      if (!this.__input) return;
+      var value = (this.__input.value || '').trim();
+
+      if (!value) {
+        this.setUnavailable(true);
+        return;
+      }
+      if (value === this.dataset.variantId) {
+        this.setUnavailable(false);
+        return;
+      }
+      this.setUnavailable(false);
+      this.render(value, null);
+    }
+
+    setUnavailable(on) {
+      this.classList.toggle('is-unavailable', !!on);
+      if (this.__unavailableEl) this.__unavailableEl.hidden = !on;
+    }
+
+    /* Paint every row for the given variant.
+       `freshRoot` (optional) is the server-rendered copy of this same element
+       from Dawn's section response — its output always wins. */
+    render(variantId, freshRoot) {
+      var map = this.__map;
+
+      this.__rows.forEach(function (row) {
+        var key = row.getAttribute('data-dim-key');
+        var out = row.querySelector('[data-dim-val]');
+        if (!key || !out) return;
+
+        var value = null;
+        var resolved = false;
+
+        if (freshRoot) {
+          var freshRow = freshRoot.querySelector('[data-dim-key="' + escapeForSelector(key) + '"]');
+          if (freshRow) {
+            var freshOut = freshRow.querySelector('[data-dim-val]');
+            value = freshOut ? (freshOut.textContent || '').trim() : '';
+            resolved = true;
+          }
+        }
+
+        if (!resolved && map) {
+          var mapped = lookup(map, key, variantId);
+          if (mapped !== undefined) {
+            value = mapped === null ? '' : String(mapped);
+            resolved = true;
+          }
+        }
+
+        /* No data for this row anywhere: leave exactly what Liquid printed. */
+        if (!resolved) return;
+
+        if (value) {
+          if (out.textContent !== value) {
+            out.textContent = value;
+            flash(row);
+          }
+          row.hidden = false;
+          row.classList.remove('is-empty');
+        } else {
+          if (out.textContent !== '') flash(row);
+          out.textContent = '';
+          row.hidden = true;
+          row.classList.add('is-empty');
+        }
+      });
+
+      /* Keep the map current if Dawn handed us a newer server render. */
+      if (freshRoot) {
+        var freshMap = parseJsonScript(freshRoot.querySelector('[data-dews-spec-json]'));
+        if (freshMap) this.__map = freshMap;
+      }
+
+      this.dataset.variantId = String(variantId);
+
+      this.dispatchEvent(
+        new CustomEvent('dews:spec-updated', {
+          bubbles: true,
+          detail: { variantId: String(variantId), source: freshRoot ? 'server' : 'json' },
+        })
+      );
+    }
+  }
+
+  if (window.customElements) {
+    window.customElements.define('dews-variant-info', DewsVariantInfo);
+  }
+})();
+</script>
+<script>
+/* ==========================================================================
+   Mock of Dawn's product-info.js — only the parts that matter here:
+     updateVariantInputs(variant?.id)   -> input[name="id"].value + change event
+     publish(variantChange, {sectionId, html, variant})
+   Nothing else is faked.
+   ========================================================================== */
+(function () {
+  var logBody = document.getElementById('log-body');
+  function log(msg, cls) {
+    var d = document.createElement('div');
+    if (cls) d.className = cls;
+    d.textContent = msg;
+    logBody.insertBefore(d, logBody.firstChild);
+    while (logBody.childNodes.length > 22) logBody.removeChild(logBody.lastChild);
+  }
+
+  document.querySelectorAll('variant-selects').forEach(function (picker) {
+    var sectionId = picker.dataset.section;
+    var productInfo = picker.closest('product-info');
+    var input = productInfo.querySelector('input[name="id"]');
+    var priceEl = productInfo.querySelector('[data-price-amount]');
+    var selectedValue = picker.querySelector('[data-selected-value]');
+
+    picker.addEventListener('change', function (e) {
+      var radio = e.target;
+      if (radio.type !== 'radio') return;
+
+      var variantId = radio.dataset.variantId || '';
+      if (selectedValue) selectedValue.textContent = radio.value;
+
+      // --- exactly what Dawn does once its section fetch resolves ---
+      input.value = variantId;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+
+      if (!variantId) {
+        log('[' + sectionId + '] no matching variant -> setUnavailable() (Dawn skips the pubsub event here)', 'warn');
+        return;
+      }
+
+      publish(PUB_SUB_EVENTS.variantChange, {
+        data: { sectionId: sectionId, html: null, variant: { id: Number(variantId), title: radio.value } }
+      });
+
+      if (priceEl) {
+        priceEl.textContent = radio.dataset.price
+          ? Number(radio.dataset.price).toLocaleString('en-IN')
+          : '—';
+      }
+
+      var dims = productInfo.querySelector('[data-dim-key="width"] [data-dim-val]');
+      log('[' + sectionId + '] variantChange -> ' + radio.value +
+          (dims ? '   Width now: ' + (dims.textContent.trim() || '(hidden)') : ''), 'ok');
+    });
+  });
+
+  // Report the actual custom element wiring once, at startup.
+  document.querySelectorAll('dews-variant-info').forEach(function (el) {
+    el.addEventListener('dews:spec-updated', function (ev) {
+      log('  ↳ ' + el.id + ' repainted from ' + ev.detail.source + ' data (variant ' + ev.detail.variantId + ')', 'dim');
+    });
+  });
+  log('ready — ' + document.querySelectorAll('dews-variant-info').length +
+      ' spec block(s) wired to Dawn pubsub', 'ok');
+})();
+</script>
+</body>
+</html>

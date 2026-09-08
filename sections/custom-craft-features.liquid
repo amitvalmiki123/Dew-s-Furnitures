@@ -1,0 +1,74 @@
+<section class="craft-features bg-{{ section.settings.bg_color }}">
+  <div class="craft-features__grid">
+    {%- for block in section.blocks -%}
+      <div class="feature-item" {{ block.shopify_attributes }}>
+        {%- if block.settings.icon_image != blank -%}
+          <img src="{{ block.settings.icon_image | image_url: width: 120 }}" alt="{{ block.settings.title }}" class="feature-item__icon" loading="lazy">
+        {%- endif -%}
+        
+        {%- if block.settings.title != blank -%}
+          <h3>{{ block.settings.title }}</h3>
+        {%- endif -%}
+        
+        {%- if block.settings.text != blank -%}
+          <p>{{ block.settings.text }}</p>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Craft Features",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "select",
+      "id": "bg_color",
+      "label": "Background Color",
+      "options": [
+        { "value": "white", "label": "White" },
+        { "value": "bone", "label": "Bone" }
+      ],
+      "default": "white"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon Image (PNG/SVG)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Feature Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Short description about this specific feature."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Craft Features",
+      "blocks": [
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" }
+      ]
+    }
+  ]
+}
+{% endschema %}
